@@ -16,7 +16,8 @@ export function WordClearSystem(world: World, gameTickNum: number) {
     var killUnitsCount = 0;
 
     for (var settlementId = 0; settlementId < world.scena.settlementsCount; settlementId++) {
-        if (!world.settlements[settlementId]) {
+        var settlement = world.settlements[settlementId];
+        if (!settlement) {
             continue;
         }
 
@@ -62,11 +63,10 @@ export function WordClearSystem(world: World, gameTickNum: number) {
 
             // убиваем всех юнитов, чтобы их почистила система очистки
 
-            var unitsEnumerator = world.settlements[settlementId].Units.GetEnumerator();
+            var unitsEnumerator = settlement.Units.GetEnumerator();
             while (unitsEnumerator.MoveNext()) {
                 var unit = unitsEnumerator.Current;
-
-                if (unit.IsDead) {
+                if (!unit || unit.IsDead) {
                     continue;
                 }
 

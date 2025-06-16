@@ -10,7 +10,8 @@ import { Entity } from "../Entity";
 
 export function ReviveSystem(world: World, gameTickNum: number) {
     for (var settlementId = 0; settlementId < world.scena.settlementsCount; settlementId++) {
-        if (!world.IsSettlementInGame(settlementId)) {
+        var settlement = world.settlements[settlementId];
+        if (!settlement || !world.IsSettlementInGame(settlementId)) {
             continue;
         }
 
@@ -32,7 +33,7 @@ export function ReviveSystem(world: World, gameTickNum: number) {
                     if (reviveComponent.tick < gameTickNum) {
                         reviveComponent.waitingToRevive = false;
                         var generator      = generateCellInSpiral(reviveComponent.cell.X, reviveComponent.cell.Y);
-                        unitComponent.unit = spawnUnits(world.settlements[settlementId], OpCfgUidToCfg[unitComponent.cfgUid], 1, UnitDirection.Down, generator)[0];
+                        unitComponent.unit = spawnUnits(settlement, OpCfgUidToCfg[unitComponent.cfgUid], 1, UnitDirection.Down, generator)[0];
                     }
                 }
                 // регистрируем смерть и запускаем обратный отсчет до воскрешения

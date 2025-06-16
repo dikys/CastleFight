@@ -1,7 +1,7 @@
 import { log } from "library/common/logging";
 import { generateCellInSpiral } from "library/common/position-tools";
 import {  createPoint } from "library/common/primitives";
-import { UnitDirection, PointCommandArgs, UnitCommand } from "library/game-logic/horde-types";
+import { UnitDirection, PointCommandArgs, UnitCommand, Unit } from "library/game-logic/horde-types";
 import { unitCanBePlacedByRealMap } from "library/game-logic/unit-and-map";
 import { UnitProducerProfessionParams, UnitProfession } from "library/game-logic/unit-professions";
 import { spawnUnit } from "library/game-logic/unit-spawn";
@@ -32,6 +32,20 @@ class UnitInfo {
 
     /** ид юнита */
     cfgId: string;
+
+    constructor(Name: string,
+        Gold: number,
+        Metal: number,
+        Lumber: number,
+        People: number,
+        cfgId: string) {
+        this.Name   = Name;
+        this.Gold   = Gold;
+        this.Metal  = Metal;
+        this.Lumber = Lumber;
+        this.People = People;
+        this.cfgId  = cfgId;
+    }
 };
 
 /** поле боя */
@@ -56,14 +70,16 @@ class BattleField {
 /** арена - набор полей боя */
 class Arena {
     battleFields: Array<BattleField>;
-    battleFieldsUnits: Array<Array<any>>;
+    battleFieldsUnits: Array<Array<Unit>>;
 
     constructor (battleFields: Array<BattleField>) {
         this.battleFields = battleFields;
-        this.battleFieldsUnits = new Array<Array<any>>(this.battleFields.length);
+        this.battleFieldsUnits = new Array<Array<Unit>>(this.battleFields.length);
     }
 
+    // @ts-expect-error
     init_left: Array<any>;
+    // @ts-expect-error
     init_right: Array<any>;
 
     CalcBattleFieldLeftUnitsSwapCount(fieldNum: number, unitNum: number) : number {
@@ -84,7 +100,7 @@ class Arena {
 
             // генерируем левую группу
 
-            var left_units = new Array<any>();
+            var left_units = new Array<Unit>();
             for (var i = 0; i < this.init_left.length; i++) {
                 var unitInfo = opCfgUidToUnitInfo.get(this.init_left[i].cfgUid) as UnitInfo;
                 var currCount = 0;
@@ -104,7 +120,7 @@ class Arena {
 
             // генерируем правую группу
 
-            var right_units = new Array<any>();
+            var right_units = new Array<Unit>();
             for (var i = 0; i < this.init_right.length; i++) {
                 var unitInfo = opCfgUidToUnitInfo.get(this.init_right[i].cfgUid) as UnitInfo;
                 var currCount = 0;
@@ -275,13 +291,11 @@ function Init(world: World) : boolean {
 
         // извлекаем текущего юнита
         
-        var unitInfo = new UnitInfo();
-        unitInfo.cfgId   = spawnBuildingComponent.spawnUnitConfigUid;
-        unitInfo.Name    = OpCfgUidToCfg[unitInfo.cfgId].Name;
-        unitInfo.Gold    = accGold;
-        unitInfo.Metal   = accMetal;
-        unitInfo.Lumber  = accLumber;
-        unitInfo.People  = accPeople;
+        var unitInfo : UnitInfo = new UnitInfo(
+            OpCfgUidToCfg[spawnBuildingComponent.spawnUnitConfigUid].Name,
+            accGold, accMetal, accLumber, accPeople,
+            spawnBuildingComponent.spawnUnitConfigUid
+        );
 
         opCfgUidToUnitInfo.set(Uid, unitInfo);
         log.info("загружен юнит: ", unitInfo.Name, " ", unitInfo.Gold, "g ", unitInfo.Metal, "m ", unitInfo.Lumber, "l ", unitInfo.People, "p");
@@ -445,7 +459,7 @@ function Test(world: World) {
 
                 for (var unitNum = 0; unitNum < arenas[arenaNum].battleFieldsUnits[fieldNum].length; unitNum++) {
                     var unit = arenas[arenaNum].battleFieldsUnits[fieldNum][unitNum];
-                    if (unit.Owner.Uid == 0) {
+                    if (unit.Owner.Uid == "0") {
                         i_unitsLeft++;
                     } else {
                         j_unitsLeft++;

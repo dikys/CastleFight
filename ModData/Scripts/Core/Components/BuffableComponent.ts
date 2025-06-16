@@ -1,3 +1,4 @@
+import { UnitConfig } from "library/game-logic/horde-types";
 import { IComponent, COMPONENT_TYPE } from "./IComponent";
 
 /** тип баффа */
@@ -25,7 +26,7 @@ export class BuffableComponent extends IComponent {
     /** тип наложенного баффа на юнита */
     buffType: BUFF_TYPE;
     /** баффнутый Cfg */
-    buffCfg: any;
+    buffCfg: UnitConfig | null;
     /** маска доступных баффов */
     buffMask: Array<boolean>;
 
@@ -50,7 +51,7 @@ export class BuffableComponent extends IComponent {
         ""
     ];
 
-    public constructor(buffMask?: Array<boolean>, buffType?: BUFF_TYPE, buffCfg?: any) {
+    public constructor(buffMask?: Array<boolean>, buffType?: BUFF_TYPE, buffCfg?: UnitConfig | null) {
         super(COMPONENT_TYPE.BUFFABLE_COMPONENT);
 
         if (buffType) {

@@ -5,8 +5,7 @@ import { COMPONENT_TYPE } from "../Components/IComponent";
 import { UnitComponent } from "../Components/UnitComponent";
 import { UpgradableBuildingComponent } from "../Components/UpgradableBuildingComponent";
 import { Entity } from "../Entity";
-
-const ReplaceUnitParameters = HordeClassLibrary.World.Objects.Units.ReplaceUnitParameters;
+import { ReplaceUnitParameters } from "library/game-logic/horde-types";
 
 export function UpgradableBuildingSystem(world: World, gameTickNum: number) {
     for (var settlementId = 0; settlementId < world.scena.settlementsCount; settlementId++) {
@@ -25,8 +24,11 @@ export function UpgradableBuildingSystem(world: World, gameTickNum: number) {
                 var upgradableBuildingComponent = entity.components.get(COMPONENT_TYPE.UPGRADABLE_BUILDING_COMPONENT) as UpgradableBuildingComponent;
 
                 // проверяем, что здание что-то строит
+                // @ts-expect-error
                 if (unitComponent.unit.OrdersMind.ActiveAct.GetType().Name == "ActProduce" &&
+                    // @ts-expect-error
                     unitComponent.unit.OrdersMind.ActiveAct.ActiveMotion.LeftTime < 100) {
+                    // @ts-expect-error
                     var buildingCfg = unitComponent.unit.OrdersMind.ActiveOrder.ProductUnitConfig;
                     
                     // проверяем, что здание строит улучшение

@@ -267,7 +267,7 @@
             "#UnitConfig_Mage_Olga",
             "#UnitConfig_Mage_Villur",
             "#UnitConfig_Mage_Mag_16",
-            "#UnitConfig_Mage_Mag_15",
+            "#UnitConfig_Mage_Mag_15"
           ],
           "ProductDirection": "Down",
           "ProduceCommandConfig": "#UnitCommandConfig_Produce",

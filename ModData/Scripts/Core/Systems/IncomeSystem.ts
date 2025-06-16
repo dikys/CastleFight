@@ -6,22 +6,27 @@ import { IncomeEvent } from "../Components/IncomeEvent";
 import { IncomeIncreaseEvent } from "../Components/IncomeIncreaseEvent";
 import { IncomeLimitedPeriodicalComponent } from "../Components/IncomeLimitedPeriodicalComponent";
 import { SettlementComponent } from "../Components/SettlementComponent";
+import { Entity } from "../Entity";
 
 export function IncomeSystem(world: World, gameTickNum: number) {
     // учитываем события увеличения инкома
     for (var settlementId = 0; settlementId < world.scena.settlementsCount; settlementId++) {
-        if (!world.IsSettlementInGame(settlementId)) {
+        var settlement = world.settlements[settlementId];
+        if (!settlement || !world.IsSettlementInGame(settlementId)) {
             continue;
         }
 
         // ищем сущность с settlement
-        var settlement_entity;
+        var settlement_entity : Entity | null = null;
         for (var i = 0; i < world.settlements_entities[settlementId].length; i++) {
             var entity = world.settlements_entities[settlementId][i];
             if (entity.components.has(COMPONENT_TYPE.SETTLEMENT_COMPONENT)) {
                 settlement_entity = entity;
                 break;
             }
+        }
+        if (!settlement_entity) {
+            continue;
         }
         var settlementComponent = settlement_entity.components.get(COMPONENT_TYPE.SETTLEMENT_COMPONENT) as SettlementComponent;
 
@@ -143,7 +148,7 @@ export function IncomeSystem(world: World, gameTickNum: number) {
                 (incomeMetal > 0 ? " пассивно " + incomeMetal + " " : "") +
                 (minedMetal > 0 ? " добыто " + minedMetal + " осталось " + metalReserves : ""),
                 createHordeColor(255, 170, 169, 173));
-            world.settlements[settlementId].Messages.AddMessage(msg);
+            settlement.Messages.AddMessage(msg);
         }
         if (incomeGold + minedGold > 0) {
             emptyIncome = false;
@@ -151,7 +156,7 @@ export function IncomeSystem(world: World, gameTickNum: number) {
                 (incomeGold > 0 ? " пассивно " + incomeGold + " " : "") +
                 (minedGold > 0 ? " добыто " + minedGold + " осталось " + goldReserves : ""),
                 createHordeColor(255, 255, 215, 0));
-            world.settlements[settlementId].Messages.AddMessage(msg);
+            settlement.Messages.AddMessage(msg);
         }
         if (incomeLumber + minedLumber > 0) {
             emptyIncome = false;
@@ -159,17 +164,17 @@ export function IncomeSystem(world: World, gameTickNum: number) {
                 (incomeLumber > 0 ? " пассивно " + incomeLumber + " " : "") +
                 (minedLumber > 0 ? " добыто " + minedLumber + " осталось " + lumberReserves : ""),
                 createHordeColor(255, 170, 107, 0));
-            world.settlements[settlementId].Messages.AddMessage(msg);
+            settlement.Messages.AddMessage(msg);
         }
         if (incomePeople > 0) {
             emptyIncome = false;
             var msg = createGameMessageWithNoSound("Выращено людей: " + incomePeople,
                 createHordeColor(255, 204, 204, 0));
-            world.settlements[settlementId].Messages.AddMessage(msg);
+            settlement.Messages.AddMessage(msg);
         }
 
         if (!emptyIncome) {
-            world.settlements[settlementId].Resources.AddResources(createResourcesAmount(incomeGold + minedGold, incomeMetal + minedMetal, incomeLumber + minedLumber, incomePeople));
+            settlement.Resources.AddResources(createResourcesAmount(incomeGold + minedGold, incomeMetal + minedMetal, incomeLumber + minedLumber, incomePeople));
         }
     }
 }

@@ -1,6 +1,7 @@
 import { printObjectItems } from "library/common/introspection";
 import { log } from "library/common/logging";
 import { COMPONENT_TYPE, IComponent } from "./Components/IComponent";
+import { UnitConfig } from "library/game-logic/horde-types";
 
 export class Entity {
     /** компоненты */
@@ -42,7 +43,7 @@ export class Entity {
     }
 
     /** настройка конфига под сущность */
-    public InitConfig(cfg : any) {
+    public InitConfig(cfg : UnitConfig) {
         for (var componentNum = 0; componentNum < COMPONENT_TYPE.SIZE; componentNum++) {
             var componentType : COMPONENT_TYPE = componentNum;
             if (!this.components.has(componentType)) {

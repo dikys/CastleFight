@@ -6,10 +6,11 @@ export function DiplomacySystem(world: World, gameTickNum: number) {
 
     var isGameEnd = true;
     for (var settlementId = 0; settlementId < world.scena.settlementsCount; settlementId++) {
-        if (!world.settlements[settlementId]) {
+        var settlement = world.settlements[settlementId];
+        if (!settlement) {
             continue;
         }
-        if (!world.settlements[settlementId].Existence.IsTotalDefeat && !world.settlements[settlementId].Existence.IsVictory) {
+        if (!settlement.Existence.IsTotalDefeat && !settlement.Existence.IsVictory) {
             isGameEnd = false;
             break;
         }
@@ -22,23 +23,24 @@ export function DiplomacySystem(world: World, gameTickNum: number) {
     // при уничтожении замка объявляем альянс всем врагам для видимости
 
     for (var settlementId = 0; settlementId < world.scena.settlementsCount; settlementId++) {
-        if (!world.settlements[settlementId] ||
-            world.settlements[settlementId].Existence.IsTotalDefeat ||
-            world.settlements[settlementId].Existence.IsVictory ||
+        var settlement = world.settlements[settlementId];
+        if (!settlement ||
+            settlement.Existence.IsTotalDefeat ||
+            settlement.Existence.IsVictory ||
             !world.settlements_castleUnit[settlementId].IsDead) {
             continue;
         }
 
         // объявляем альянс всем врагам для видимости
         for (var enemySettlementId = 0; enemySettlementId < world.scena.settlementsCount; enemySettlementId++) {
-            if (!world.settlements[enemySettlementId] || 
+            var enemySettlement = world.settlements[enemySettlementId];
+            if (!enemySettlement || 
                 !world.settlements_settlements_warFlag[settlementId][enemySettlementId]) {
                 continue;
             }
-            if (world.settlements[settlementId].Diplomacy.DeclareAlliance(world.settlements[enemySettlementId])
-                 != DiplomacyStatus.Alliance) {
-                world.settlements[settlementId].Diplomacy.DeclareAlliance(world.settlements[enemySettlementId]);
-                world.settlements[enemySettlementId].Diplomacy.DeclareAlliance(world.settlements[settlementId]);
+            if (settlement.Diplomacy.GetDiplomacyStatus(enemySettlement) != DiplomacyStatus.Alliance) {
+                settlement.Diplomacy.DeclareAlliance(enemySettlement);
+                enemySettlement.Diplomacy.DeclareAlliance(settlement);
             }
         }
     }
@@ -46,9 +48,10 @@ export function DiplomacySystem(world: World, gameTickNum: number) {
     // присуждаем поражение альянсам
 
     for (var settlementId = 0; settlementId < world.scena.settlementsCount; settlementId++) {
-        if (!world.settlements[settlementId] ||
-            world.settlements[settlementId].Existence.IsTotalDefeat ||
-            world.settlements[settlementId].Existence.IsVictory) {
+        var settlement = world.settlements[settlementId];
+        if (!settlement ||
+            settlement.Existence.IsTotalDefeat ||
+            settlement.Existence.IsVictory) {
             continue;
         }
 
@@ -73,23 +76,25 @@ export function DiplomacySystem(world: World, gameTickNum: number) {
 
         // присуждаем поражение всему альянсу
         for (var allySettlementId = 0; allySettlementId < world.scena.settlementsCount; allySettlementId++) {
+            var allySettlement = world.settlements[allySettlementId];
             // проверка, что поселение в игре и есть мир
-            if (!world.settlements[allySettlementId] ||
+            if (!allySettlement ||
                 world.settlements_settlements_warFlag[settlementId][allySettlementId]) {
                 continue;
             }
 
             // присуждаем поражение
-            world.settlements[allySettlementId].Existence.ForceTotalDefeat();
+            allySettlement.Existence.ForceTotalDefeat();
         }
     }
 
     // присуждаем победу последнему альянсу
 
     for (var settlementId = 0; settlementId < world.scena.settlementsCount; settlementId++) {
-        if (!world.settlements[settlementId] ||
-            world.settlements[settlementId].Existence.IsTotalDefeat ||
-            world.settlements[settlementId].Existence.IsVictory) {
+        var settlement = world.settlements[settlementId];
+        if (!settlement ||
+            settlement.Existence.IsTotalDefeat ||
+            settlement.Existence.IsVictory) {
             continue;
         }
 
@@ -97,10 +102,11 @@ export function DiplomacySystem(world: World, gameTickNum: number) {
 
         var isVictory = true;
         for (var enemySettlementId = 0; enemySettlementId < world.scena.settlementsCount; enemySettlementId++) {
+            var enemySettlement = world.settlements[enemySettlementId];
             // проверка, что поселение в игре, есть война, поселение проиграло
-            if (!world.settlements[enemySettlementId] ||
+            if (!enemySettlement ||
                 !world.settlements_settlements_warFlag[settlementId][enemySettlementId] ||
-                world.settlements[enemySettlementId].Existence.IsTotalDefeat
+                enemySettlement.Existence.IsTotalDefeat
             ) {
                 continue;
             }
@@ -114,15 +120,17 @@ export function DiplomacySystem(world: World, gameTickNum: number) {
         // присуждаем победу всему альянсу
 
         for (var allySettlementId = 0; allySettlementId < world.scena.settlementsCount; allySettlementId++) {
+            var allySettlement = world.settlements[allySettlementId];
+            
             // проверка, что поселение в игре и есть мир
-            if (!world.settlements[allySettlementId] ||
+            if (!allySettlement ||
                 world.settlements_settlements_warFlag[settlementId][allySettlementId]) {
                 continue;
             }
 
             // присуждаем победу
-            if (!world.settlements[allySettlementId].Existence.IsVictory) {
-                world.settlements[allySettlementId].Existence.ForceVictory();
+            if (!allySettlement.Existence.IsVictory) {
+                allySettlement.Existence.ForceVictory();
             }
         }
 

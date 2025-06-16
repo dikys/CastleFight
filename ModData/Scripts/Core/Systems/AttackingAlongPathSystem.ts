@@ -55,6 +55,10 @@ export function AttackingAlongPathSystem_stage1(world: World, gameTickNum: numbe
             }
 
             var unitComponent = entity.components.get(COMPONENT_TYPE.UNIT_COMPONENT) as UnitComponent;
+            if (!unitComponent.unit) {
+                continue;
+            }
+
             //var unitCell  = new Cell(unitComponent.unit.Cell.X, unitComponent.unit.Cell.Y);
 
             // проверяем, что враг вблизи замка врага
@@ -79,10 +83,13 @@ export function AttackingAlongPathSystem_stage1(world: World, gameTickNum: numbe
             // }
 
             // проверяем, что юнит кого-то бьет
+            
+            // @ts-expect-error
             if (!unitComponent.unit.OrdersMind.ActiveOrder.Target) {
                 continue;
             }
 
+            // @ts-expect-error
             var targetCastleUnit = unitComponent.unit.OrdersMind.ActiveOrder.Target;
             // проверяем, что это чей-то замок
             if (targetCastleUnit.Cfg.Uid != Config_Castle.CfgUid) {
@@ -153,7 +160,7 @@ export function AttackingAlongPathSystem_stage2(world: World, gameTickNum: numbe
             continue;
         }
 
-        var castleUnit_settlementId = world.settlements_castleUnit[settlementId].Owner.Uid;
+        var castleUnit_settlementId = Number.parseInt(world.settlements_castleUnit[settlementId].Owner.Uid);
 
         for (var i = 0; i < world.settlements_entities[settlementId].length; i++) {
             var entity = world.settlements_entities[settlementId][i] as Entity;
@@ -190,8 +197,8 @@ export function AttackingAlongPathSystem_stage2(world: World, gameTickNum: numbe
                 var unitInCell = unitsMap.GetUpperUnit(attackingAlongPathComponent.attackPath[attackingAlongPathComponent.currentPathPointNum].X, attackingAlongPathComponent.attackPath[attackingAlongPathComponent.currentPathPointNum].Y);
                 if (unitInCell &&
                     unitInCell.Cfg.Uid == Config_Castle.CfgUid &&
-                    unitInCell.Owner.Uid < world.scena.settlementsCount &&
-                    world.settlements_settlements_warFlag[settlementId][unitInCell.Owner.Uid]) {
+                    Number.parseInt(unitInCell.Owner.Uid) < world.scena.settlementsCount &&
+                    world.settlements_settlements_warFlag[settlementId][Number.parseInt(unitInCell.Owner.Uid)]) {
                     continue;
                 }
 

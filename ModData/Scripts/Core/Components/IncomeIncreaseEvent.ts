@@ -1,3 +1,4 @@
+import { UnitConfig } from "library/game-logic/horde-types";
 import { IComponent, COMPONENT_TYPE } from "./IComponent";
 
 /** событие разового увеличение пассивного дохода поселения */
@@ -21,7 +22,7 @@ export class IncomeIncreaseEvent extends IComponent {
         return new IncomeIncreaseEvent(this.metal, this.gold, this.lumber);
     }
 
-    public InitConfig(cfg : any) {
+    public InitConfig(cfg : UnitConfig) {
         super.InitConfig(cfg);
 
         ScriptUtils.SetValue(cfg, "Description", cfg.Description + (cfg.Description == "" ? "" : "\n") + "Увеличивает доход на " +

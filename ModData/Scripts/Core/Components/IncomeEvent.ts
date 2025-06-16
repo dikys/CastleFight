@@ -1,3 +1,4 @@
+import { UnitConfig } from "library/game-logic/horde-types";
 import { IComponent, COMPONENT_TYPE } from "./IComponent";
 
 /**
@@ -26,7 +27,7 @@ export class IncomeEvent extends IComponent {
         return new IncomeEvent(this.metal, this.gold, this.lumber, this.people);
     }
 
-    public InitConfig(cfg : any) {
+    public InitConfig(cfg : UnitConfig) {
         super.InitConfig(cfg);
 
         ScriptUtils.SetValue(cfg, "Description", cfg.Description + (cfg.Description == "" ? "" : "\n") + "Разово дает " +

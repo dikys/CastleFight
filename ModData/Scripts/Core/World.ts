@@ -1,7 +1,7 @@
 import { log } from "library/common/logging";
 import { createPoint } from "library/common/primitives";
 import { isReplayMode } from "library/game-logic/game-tools";
-import { UnitCommand, UnitDirection } from "library/game-logic/horde-types";
+import { Scena, Settlement, Unit, UnitCommand, UnitDirection } from "library/game-logic/horde-types";
 import { spawnUnit } from "library/game-logic/unit-spawn";
 import { world } from "./CastleFightPlugin";
 import { Cell as Cell, getCurrentTime } from "./Utils";
@@ -29,16 +29,16 @@ export enum GameState {
 };
 
 export class World {
-    /** выбранная сцена */
+    /** выбранная сцена */ // @ts-expect-error
     scena : typeof IScena;
 
-    /** ссылки на поселения, если не в игре, то будет null */
-    settlements: Array<any>;
-    /** для каждого поселения хранит список сущностей */
+    /** ссылки на поселения, если не в игре, то будет null */ // @ts-expect-error
+    settlements: Array<Settlement | null>;
+    /** для каждого поселения хранит список сущностей */ // @ts-expect-error
     settlements_entities: Array<Array<Entity>>;
-    /** для каждого поселения хранится ссылка на главного замка */
-    settlements_castleUnit: Array<any>;
-    /** таблица войны */
+    /** для каждого поселения хранится ссылка на главного замка */ // @ts-expect-error
+    settlements_castleUnit: Array<Unit>;
+    /** таблица войны */ // @ts-expect-error
     settlements_settlements_warFlag: Array<Array<boolean>>;
 
     /** текущее состояние игры */
@@ -51,10 +51,10 @@ export class World {
     /** для каждой системы хранит время выполнения */
     systems_executionTime: Array<number>;
 
-    /** реальная сцена */
-    realScena: any;
+    /** реальная сцена */ // @ts-expect-error
+    realScena: Scena;
 
-    /** для каждого поселения хранит обработчик построенных юнитов */
+    /** для каждого поселения хранит обработчик построенных юнитов */ // @ts-expect-error
     unitProducedCallbacks: Array<any>;
     
     public constructor ( )
@@ -70,9 +70,9 @@ export class World {
     public Init() {
         this.realScena                = ActiveScena.GetRealScena();
 
-        this.settlements              = new Array<any>(this.scena.settlementsCount);
+        this.settlements              = new Array<Settlement|null>(this.scena.settlementsCount);
         this.settlements_entities     = new Array<Array<Entity>>(this.scena.settlementsCount);
-        this.settlements_castleUnit   = new Array<any>(this.scena.settlementsCount);
+        this.settlements_castleUnit   = new Array<Unit>(this.scena.settlementsCount);
         this.settlements_settlements_warFlag = new Array<Array<boolean>>(this.scena.settlementsCount);
 
         this.unitProducedCallbacks = new Array<any>(this.scena.settlementsCount);
@@ -151,11 +151,13 @@ export class World {
                 var that = this;
                 // добавляем обработчик создания юнитов
                 this.unitProducedCallbacks[settlementId] =
-                    this.settlements[settlementId].Units.UnitProduced.connect(function (sender, UnitProducedEventArgs) {
+                    settlement.Units.UnitProduced.connect(function (sender, UnitProducedEventArgs) {
                         try {
                             // создаем событие - постройку юнита
                             var event_entity = new Entity();
+                            // @ts-expect-error
                             event_entity.components.set(COMPONENT_TYPE.UNIT_PRODUCED_EVENT, new UnitProducedEvent(UnitProducedEventArgs.ProducerUnit, UnitProducedEventArgs.Unit));
+                            // @ts-expect-error
                             that.settlements_entities[UnitProducedEventArgs.ProducerUnit.Owner.Uid].push(event_entity);
                         } catch (ex) {
                             log.exception(ex);
@@ -163,10 +165,10 @@ export class World {
                     });
 
                 // удаляем лишних юнитов на карте
-                var units = this.settlements[settlementId].Units;
+                var units = settlement.Units;
                 var enumerator = units.GetEnumerator();
                 while(enumerator.MoveNext()) {
-                    enumerator.Current.Delete();
+                    enumerator.Current?.Delete();
                 }
                 enumerator.Dispose();
             }
@@ -185,7 +187,9 @@ export class World {
 
         // заполняем таблицу альянсов
         for (var settlementId = 0; settlementId < this.scena.settlementsCount; settlementId++) {
-            if (this.settlements[settlementId] == null) {
+            // @ts-expect-error
+            var settlement = this.settlements[settlementId];
+            if (!settlement) {
                 continue;
             }
             for (var other_settlementId = 0; other_settlementId < this.scena.settlementsCount; other_settlementId++) {
@@ -193,7 +197,7 @@ export class World {
                     this.settlements_settlements_warFlag[settlementId][other_settlementId] = false;
                 } else {
                     this.settlements_settlements_warFlag[settlementId][other_settlementId]
-                        = this.settlements[settlementId].Diplomacy.IsWarStatus(this.settlements[other_settlementId]);
+                        = settlement.Diplomacy.IsWarStatus(this.settlements[other_settlementId]);
                 }
             }
         }
@@ -203,8 +207,9 @@ export class World {
         var unitsMap        = this.realScena.UnitsMap;
 
         for (var settlementId = 0; settlementId < this.scena.settlementsCount; settlementId++) {
+            var settlement = this.settlements[settlementId];
             // проверяем, что поселение в игре
-            if (!this.settlements[settlementId]) {
+            if (!settlement) {
                 continue;
             }
 
@@ -213,7 +218,7 @@ export class World {
                 this.settlements_castleUnit[settlementId] = castleUnit;                    
             } else {
                 this.settlements_castleUnit[settlementId] = spawnUnit(
-                    this.settlements[settlementId],
+                    settlement,
                     OpCfgUidToCfg[Config_Castle.CfgUid],
                     createPoint(this.scena.settlements_castle_cell[settlementId].X, this.scena.settlements_castle_cell[settlementId].Y),
                     UnitDirection.Down
@@ -268,8 +273,8 @@ export class World {
      * @param baseEntity базовая сущность, на основе которого будет создана новая (если нет, то берется по умолчанию)
      * @returns вернет ссылку на сущность юнита
      */
-    public RegisterUnitEntity(unit: any, baseEntity?: Entity) {
-        var settlementId = unit.Owner.Uid;
+    public RegisterUnitEntity(unit: Unit, baseEntity?: Entity) {
+        var settlementId = Number.parseInt(unit.Owner.Uid);
 
         // создаем сущность
         var newEntity : Entity;

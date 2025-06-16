@@ -1,12 +1,13 @@
+import { Unit } from "library/game-logic/horde-types";
 import { IComponent, COMPONENT_TYPE } from "./IComponent";
 
 export class UnitProducedEvent extends IComponent {
     /** ссылка на юнита-строителя */
-    producerUnit: any;
+    producerUnit: Unit;
     /** ссылка на построенного юнита */
-    producedUnit: any;
+    producedUnit: Unit;
 
-    public constructor(producerUnit: any, producedUnit: any) {
+    public constructor(producerUnit: Unit, producedUnit: Unit) {
         super(COMPONENT_TYPE.UNIT_PRODUCED_EVENT);
 
         this.producerUnit = producerUnit;

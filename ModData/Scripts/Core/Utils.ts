@@ -1,7 +1,8 @@
 import { generateCellInSpiral } from "library/common/position-tools";
 import { createBox, createPoint } from "library/common/primitives";
-import { PointCommandArgs, TileType, UnitCommand, UnitConfig } from "library/game-logic/horde-types";
+import { PointCommandArgs, Settlement, TileType, Unit, UnitCommand, UnitConfig, UnitDirection } from "library/game-logic/horde-types";
 import { getUnitProfessionParams, UnitProducerProfessionParams, UnitProfession } from "library/game-logic/unit-professions";
+import { AssignOrderMode } from "library/mastermind/virtual-input";
 
 const SpawnUnitParameters = HordeClassLibrary.World.Objects.Units.SpawnUnitParameters;
 
@@ -29,17 +30,17 @@ export function getCurrentTime () {
     return new Date().getTime();
 }
 
-export function CreateUnitConfig(baseConfigUid: string, newConfigUid: string) {
+export function CreateUnitConfig(baseConfigUid: string, newConfigUid: string) : UnitConfig {
     // при наличии конфига удаляем его
     if (HordeContentApi.HasUnitConfig(newConfigUid)) {
         //HordeContentApi.RemoveConfig(HordeContentApi.GetUnitConfig(newConfigUid));
         return HordeContentApi.GetUnitConfig(newConfigUid);
     }
-    return HordeContentApi.CloneConfig(HordeContentApi.GetUnitConfig(baseConfigUid), newConfigUid);
+    return HordeContentApi.CloneConfig(HordeContentApi.GetUnitConfig(baseConfigUid), newConfigUid) as UnitConfig;
 }
 
 /** добавить профессию найма юнитов, если была добавлена, то установит точки выхода и очистит список построек */
-export function CfgAddUnitProducer(Cfg: any) {
+export function CfgAddUnitProducer(Cfg: UnitConfig) {
     // даем профессию найм войнов при отсутствии
     if (!getUnitProfessionParams(Cfg, UnitProfession.UnitProducer)) {
         var donorCfg = HordeContentApi.CloneConfig(HordeContentApi.GetUnitConfig("#UnitConfig_Slavyane_Barrack")) as UnitConfig;
@@ -56,6 +57,7 @@ export function CfgAddUnitProducer(Cfg: any) {
 
         // очищаем список
         var producerParams = Cfg.GetProfessionParams(UnitProducerProfessionParams, UnitProfession.UnitProducer);
+        // @ts-expect-error
         var produceList    = producerParams.CanProduceList;
         produceList.Clear();
 
@@ -64,7 +66,7 @@ export function CfgAddUnitProducer(Cfg: any) {
 }
 
 /** установить скорость */
-export function CfgSetSpeed(cfg: any, speeds: Map<TileType, number>) {
+export function CfgSetSpeed(cfg: UnitConfig, speeds: Map<TileType, number>) {
     var tileTypes = speeds.keys();
     for (var tileType = tileTypes.next(); !tileType.done; tileType = tileTypes.next()) {
         cfg.Speeds.Item.set(tileType.value, speeds.get(tileType.value));
@@ -72,7 +74,7 @@ export function CfgSetSpeed(cfg: any, speeds: Map<TileType, number>) {
 };
 
 /** отдать юниту команду в ближайшую свободную точку */
-export function UnitGiveOrderToNearEmptyCell (unit: any, point: Cell, unitCommand: any, assignOrderMode: any) {
+export function UnitGiveOrderToNearEmptyCell (unit: Unit, point: Cell, unitCommand: UnitCommand, assignOrderMode: AssignOrderMode) {
     var commandsMind       = unit.CommandsMind;
     var disallowedCommands = ScriptUtils.GetValue(commandsMind, "DisallowedCommands");
 
@@ -98,7 +100,7 @@ export function UnitGiveOrderToNearEmptyCell (unit: any, point: Cell, unitComman
 }
 
 /** отдать юниту команду в точку */
-export function UnitGiveOrderToCell (unit: any, point: Cell, unitCommand: any, assignOrderMode: any) {
+export function UnitGiveOrderToCell (unit: Unit, point: Cell, unitCommand: UnitCommand, assignOrderMode: AssignOrderMode) {
     var commandsMind       = unit.CommandsMind;
     var disallowedCommands = ScriptUtils.GetValue(commandsMind, "DisallowedCommands");
 
@@ -113,7 +115,7 @@ export function UnitGiveOrderToCell (unit: any, point: Cell, unitCommand: any, a
 }
 
 /** запретить управление юнитом */
-export function UnitDisallowCommands(unit: any) {
+export function UnitDisallowCommands(unit: Unit) {
     var commandsMind       = unit.CommandsMind;
     var disallowedCommands = ScriptUtils.GetValue(commandsMind, "DisallowedCommands");
     disallowedCommands.Add(UnitCommand.MoveToPoint, 1);
@@ -125,7 +127,7 @@ export function UnitDisallowCommands(unit: any) {
 }
 
 /** разрешить управление юнитом */
-export function UnitAllowCommands(unit: any) {
+export function UnitAllowCommands(unit: Unit) {
     var commandsMind       = unit.CommandsMind;
     var disallowedCommands = ScriptUtils.GetValue(commandsMind, "DisallowedCommands");
     if (disallowedCommands.ContainsKey(UnitCommand.MoveToPoint)) disallowedCommands.Remove(UnitCommand.MoveToPoint);
@@ -192,14 +194,14 @@ export class Rectangle {
     }
 }
 
-export function GetUnitsInArea(rect: Rectangle): Array<any> {
+export function GetUnitsInArea(rect: Rectangle): Array<Unit> {
     let box = createBox(rect.xs, rect.ys, 0, rect.xe, rect.ye, 2);
     let unitsInBox = ActiveScena.UnitsMap.UnitsTree.GetUnitsInBox(box);
     let count = ScriptUtils.GetValue(unitsInBox, "Count");
     let units = ScriptUtils.GetValue(unitsInBox, "Units");
 
     let unitsIds = new Set<number>();
-    let result = new Array<any>();
+    let result = new Array<Unit>();
 
     for (let index = 0; index < count; ++index) {
         let unit = units[index];
@@ -219,12 +221,16 @@ export function GetUnitsInArea(rect: Rectangle): Array<any> {
     return result;
 }
 
-export function spawnUnits(settlement, uCfg, uCount, direction, generator) {
+export function spawnUnits(settlement : Settlement,
+    uCfg : UnitConfig,
+    uCount : number,
+    direction : UnitDirection,
+    generator: Generator<{X: number;Y: number;}, any, any>) : Array<Unit> {
     let spawnParams = new SpawnUnitParameters();
     spawnParams.ProductUnitConfig = uCfg;
     spawnParams.Direction = direction;
 
-    let outSpawnedUnits: any[] = [];
+    let outSpawnedUnits = new Array<Unit>();
     for (let position = generator.next(); !position.done && outSpawnedUnits.length < uCount; position = generator.next()) {
         if (uCfg.CanBePlacedByRealMap(ActiveScena.GetRealScena(), position.value.X, position.value.Y)) {
             spawnParams.Cell = createPoint(position.value.X, position.value.Y);

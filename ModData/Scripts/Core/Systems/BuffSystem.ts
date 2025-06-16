@@ -3,7 +3,7 @@ import { generateCellInSpiral } from "library/common/position-tools";
 import { createHordeColor, createPF } from "library/common/primitives";
 import { mergeFlags } from "library/dotnet/dotnet-utils";
 import { spawnDecoration } from "library/game-logic/decoration-spawn";
-import { UnitSpecification, UnitFlags, UnitDirection } from "library/game-logic/horde-types";
+import { UnitSpecification, UnitFlags, UnitDirection, UnitConfig } from "library/game-logic/horde-types";
 import { OpCfgUidToEntity } from "../Configs/IConfig";
 import { CreateUnitConfig, spawnUnits, UnitDisallowCommands } from "../Utils";
 import { World } from "../World";
@@ -32,10 +32,12 @@ export function BuffSystem(world: World, gameTickNum: number) {
             var buffComponent = entity.components.get(COMPONENT_TYPE.BUFF_COMPONENT) as BuffComponent;
             
             // проверяем, что юнит кого-то бьет
-            if (!unitComponent.unit.OrdersMind.ActiveOrder.Target) {
+            // @ts-expect-error
+            if (!unitComponent.unit || !unitComponent.unit.OrdersMind.ActiveOrder.Target) {
                 continue;
             }
 
+            // @ts-expect-error
             var target_CfgUid = unitComponent.unit.OrdersMind.ActiveOrder.Target.Cfg.Uid;
 
             // проверяем, что цель можно баффать
@@ -54,6 +56,7 @@ export function BuffSystem(world: World, gameTickNum: number) {
                 continue;
             }
 
+            // @ts-expect-error
             var target_settlementId = unitComponent.unit.OrdersMind.ActiveOrder.Target.Owner.Uid;
 
             // ищем сущность цели
@@ -63,6 +66,7 @@ export function BuffSystem(world: World, gameTickNum: number) {
                 if (tentity.components.has(COMPONENT_TYPE.UNIT_COMPONENT) &&
                     tentity.components.has(COMPONENT_TYPE.BUFFABLE_COMPONENT)) {
                     var tunitComponent = tentity.components.get(COMPONENT_TYPE.UNIT_COMPONENT) as UnitComponent;
+                    // @ts-expect-error
                     if (tunitComponent.unit.Id == unitComponent.unit.OrdersMind.ActiveOrder.Target.Id) {
                         target_entityId = k;
                         break;
@@ -84,10 +88,14 @@ export function BuffSystem(world: World, gameTickNum: number) {
             var target_unitComponent     = target_entity.components.get(COMPONENT_TYPE.UNIT_COMPONENT) as UnitComponent;
             var target_buffableComponent = target_entity.components.get(COMPONENT_TYPE.BUFFABLE_COMPONENT) as BuffableComponent;
 
+            if (!target_unitComponent.unit) {
+                continue;
+            }
+
             // бафаем цель
 
             // обновляем конфиг баффнутого юнита
-            var buffUnitCfg : any;
+            var buffUnitCfg : UnitConfig;
             var buffUnitCfgUid : string = target_unitComponent.cfgUid + BuffableComponent.BuffCfgUidSuffix[buffComponent.buffType];
             if (HordeContentApi.HasUnitConfig(buffUnitCfgUid)) {
                 buffUnitCfg = HordeContentApi.GetUnitConfig(buffUnitCfgUid);
@@ -155,6 +163,7 @@ export function BuffSystem(world: World, gameTickNum: number) {
             // создаем дополнительных баффнутых юнитов
             if (spawnCount > 1) {
                 var generator    = generateCellInSpiral(target_unitComponent.unit.Cell.X, target_unitComponent.unit.Cell.Y);
+                // @ts-expect-error
                 var spawnedUnits = spawnUnits(world.settlements[target_settlementId], buffUnitCfg, spawnCount - 1, UnitDirection.Down, generator);
                 log.info("Заспавнено юнитов ", spawnedUnits.length);
                 for (var spawnedUnit of spawnedUnits) {
@@ -189,6 +198,7 @@ export function BuffSystem(world: World, gameTickNum: number) {
                 spawnDecoration(world.realScena, HordeContentApi.GetVisualEffectConfig("#VisualEffectConfig_LittleDust"), target_unitComponent.unit.Position);
             } else {
                 var generator    = generateCellInSpiral(target_unitComponent.unit.Cell.X, target_unitComponent.unit.Cell.Y);
+                // @ts-expect-error
                 var spawnedUnits = spawnUnits(world.settlements[target_settlementId], buffUnitCfg, 1, UnitDirection.Down, generator);
                 for (var spawnedUnit of spawnedUnits) {
                     var newEntity              = world.RegisterUnitEntity(spawnedUnit, target_entity);

@@ -1,3 +1,5 @@
+import { UnitConfig } from "library/game-logic/horde-types";
+
 export enum COMPONENT_TYPE {
     UNIT_COMPONENT = 0,
     SPAWN_BUILDING_COMPONENT,
@@ -37,5 +39,5 @@ export class IComponent {
     }
 
     /** настройка конфига под сущность */
-    public InitConfig(cfg : any) {}
+    public InitConfig(cfg : UnitConfig) {}
 };

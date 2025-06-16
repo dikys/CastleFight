@@ -4,7 +4,7 @@ import { IComponent, COMPONENT_TYPE } from "./IComponent";
 export class AttackingAlongPathComponent extends IComponent {
     /** номер выбранного пути атаки */
     selectedAttackPathNum: number;
-    /** путь атаки */
+    /** путь атаки */ // @ts-expect-error
     attackPath: Array<Cell>;
     /** номер точки в которую нужно сейчас идти */
     currentPathPointNum: number;

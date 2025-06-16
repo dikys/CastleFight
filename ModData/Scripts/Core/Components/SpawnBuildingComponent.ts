@@ -2,6 +2,7 @@ import { UnitProducerProfessionParams, UnitProfession } from "library/game-logic
 import { OpCfgUidToCfg } from "../Configs/IConfig";
 import { CfgAddUnitProducer, CreateUnitConfig } from "../Utils";
 import { IComponent, COMPONENT_TYPE } from "./IComponent";
+import { UnitConfig } from "library/game-logic/horde-types";
 
 export class SpawnBuildingComponent extends IComponent {
     /** ид конфига юнита */
@@ -29,7 +30,7 @@ export class SpawnBuildingComponent extends IComponent {
         return new SpawnBuildingComponent(this.spawnUnitConfigUid, this.spawnTact, this.spawnPeriodTact, this.spawnCount);
     }
 
-    public InitConfig(cfg : any) {
+    public InitConfig(cfg : UnitConfig) {
         super.InitConfig(cfg);
 
         // даем профессию найма юнитов
@@ -38,6 +39,7 @@ export class SpawnBuildingComponent extends IComponent {
         // добавляем сброс таймера спавна
         this.InitResetSpawnCfg();
         var producerParams = cfg.GetProfessionParams(UnitProducerProfessionParams, UnitProfession.UnitProducer);
+        // @ts-expect-error
         var produceList    = producerParams.CanProduceList;
         produceList.Add(OpCfgUidToCfg[SpawnBuildingComponent.resetSpawnCfgUid]);
 

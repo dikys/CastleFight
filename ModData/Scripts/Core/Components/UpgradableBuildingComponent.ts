@@ -4,6 +4,7 @@ import { Entity } from "../Entity";
 import { CfgAddUnitProducer, CreateUnitConfig } from "../Utils";
 import { IComponent, COMPONENT_TYPE } from "./IComponent";
 import { SpawnBuildingComponent } from "./SpawnBuildingComponent";
+import { UnitConfig } from "library/game-logic/horde-types";
 
 export class UpgradableBuildingComponent extends IComponent {
     /** список ид конфигов, в которые здание можно улучшить */
@@ -20,7 +21,7 @@ export class UpgradableBuildingComponent extends IComponent {
         return new UpgradableBuildingComponent(this.upgradesCfgUid);
     }
 
-    public InitConfig(cfg : any) {
+    public InitConfig(cfg : UnitConfig) {
         super.InitConfig(cfg);
 
         // даем профессию найма юнитов
@@ -28,6 +29,7 @@ export class UpgradableBuildingComponent extends IComponent {
 
         // добавляем в постройку дерево улучшений
         var producerParams = cfg.GetProfessionParams(UnitProducerProfessionParams, UnitProfession.UnitProducer);
+        // @ts-expect-error
         var produceList    = producerParams.CanProduceList;
         ScriptUtils.SetValue(cfg, "Description", cfg.Description + (cfg.Description == "" ? "" : "\n\n") + "Можно улучшить до:");
         for (var i = 0; i < this.upgradesCfgUid.length; i++) {
@@ -43,7 +45,7 @@ export class UpgradableBuildingComponent extends IComponent {
         return cfgUid + this.upgradeIconSuffix;
     }
 
-    private _GenerateRecursivereImprovementTree(cfg: any, currentCfgUid: string, shiftStr: string) {
+    private _GenerateRecursivereImprovementTree(cfg: UnitConfig, currentCfgUid: string, shiftStr: string) {
         var currentCfg = OpCfgUidToCfg[currentCfgUid];
         ScriptUtils.SetValue(cfg, "Description", cfg.Description + "\n" + shiftStr + currentCfg.Name);
 
@@ -60,7 +62,7 @@ export class UpgradableBuildingComponent extends IComponent {
         }
     }
 
-    private _GenerateImproveIconCfg(cfgUid : string) : any {
+    private _GenerateImproveIconCfg(cfgUid : string) : UnitConfig {
         var iconCfgUid = UpgradableBuildingComponent.GetUpgradeCfgUid(cfgUid);
         var iconCfg    = OpCfgUidToCfg[iconCfgUid];
         if (iconCfg == undefined) {

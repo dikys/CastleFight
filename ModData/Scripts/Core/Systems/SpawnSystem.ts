@@ -11,7 +11,8 @@ import { Entity } from "../Entity";
 
 export function SpawnSystem(world: World, gameTickNum: number) {
     for (var settlementId = 0; settlementId < world.scena.settlementsCount; settlementId++) {
-        if (!world.IsSettlementInGame(settlementId)) {
+        var settlement = world.settlements[settlementId];
+        if (!settlement || !world.IsSettlementInGame(settlementId)) {
             continue;
         }
 
@@ -28,7 +29,9 @@ export function SpawnSystem(world: World, gameTickNum: number) {
                     var spawnBuildingComponent = entity.components.get(COMPONENT_TYPE.SPAWN_BUILDING_COMPONENT) as SpawnBuildingComponent;
 
                     // проверяем, что здание что-то строит
+                    // @ts-expect-error
                     if (unitComponent.unit.OrdersMind.ActiveAct.GetType().Name == "ActProduce") {
+                        // @ts-expect-error
                         var buildingCfg = unitComponent.unit.OrdersMind.ActiveOrder.ProductUnitConfig;
                         // проверяем, если здание хочет сбросить таймер спавна
                         if (buildingCfg.Uid == SpawnBuildingComponent.resetSpawnCfgUid) {
@@ -50,7 +53,7 @@ export function SpawnSystem(world: World, gameTickNum: number) {
 
                         // спавним юнитов
                         var generator     = generateCellInSpiral(unitComponent.unit.Cell.X + emergePoint.X, unitComponent.unit.Cell.Y + emergePoint.Y);
-                        var spawnedUnits  = spawnUnits(world.settlements[settlementId], OpCfgUidToCfg[spawnBuildingComponent.spawnUnitConfigUid], spawnBuildingComponent.spawnCount, UnitDirection.Down, generator);
+                        var spawnedUnits  = spawnUnits(settlement, OpCfgUidToCfg[spawnBuildingComponent.spawnUnitConfigUid], spawnBuildingComponent.spawnCount, UnitDirection.Down, generator);
                         for (var spawnedUnit of spawnedUnits) {
                             UnitDisallowCommands(spawnedUnit);
                             world.RegisterUnitEntity(spawnedUnit);
@@ -69,7 +72,7 @@ export function SpawnSystem(world: World, gameTickNum: number) {
                     if (spawnEvent.spawnTact < gameTickNum) {
                         // спавним юнитов
                         var generator     = generateCellInSpiral(unitComponent.unit.Cell.X, unitComponent.unit.Cell.Y);
-                        var spawnedUnits  = spawnUnits(world.settlements[settlementId], OpCfgUidToCfg[spawnEvent.spawnUnitConfigUid], spawnEvent.spawnCount, UnitDirection.Down, generator);
+                        var spawnedUnits  = spawnUnits(settlement, OpCfgUidToCfg[spawnEvent.spawnUnitConfigUid], spawnEvent.spawnCount, UnitDirection.Down, generator);
                         for (var spawnedUnit of spawnedUnits) {
                             UnitDisallowCommands(spawnedUnit);
                             var spawnedEntity = world.RegisterUnitEntity(spawnedUnit);

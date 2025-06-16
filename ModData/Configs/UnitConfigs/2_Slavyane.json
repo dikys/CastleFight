@@ -7,7 +7,7 @@
       "Uid": "#UnitConfig_Slavyane_Bridge",
       "Shield": 400,
       "MaxHealth": 20000,
-      "MinHealth": 1500,
+      "MinHealth": 1500
     },
     {
       "Archetype": "#UnitConfig_Slavyane_Beamman",

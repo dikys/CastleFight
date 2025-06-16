@@ -1,7 +1,7 @@
 import { log } from "library/common/logging";
 import { World } from "../World";
-import { PointCommandArgs, ProduceAtCommandArgs, ProduceCommandArgs, UnitCommand } from "library/game-logic/horde-types";
-import { createPoint, createResourcesAmount } from "library/common/primitives";
+import { PointCommandArgs, ProduceAtCommandArgs, ProduceCommandArgs, Unit, UnitCommand, UnitConfig } from "library/game-logic/horde-types";
+import { createPoint, createResourcesAmount, ResourcesAmount } from "library/common/primitives";
 import { UnitProducerProfessionParams, UnitProfession } from "library/game-logic/unit-professions";
 import { AssignOrderMode } from "library/mastermind/virtual-input";
 import { generateCellInSpiral } from "library/common/position-tools";
@@ -31,8 +31,6 @@ import { Config_Holy_spirit_cloning } from "../Configs/Church/Config_Holy_spirit
 import { Config_Holy_spirit_defense } from "../Configs/Church/Config_Holy_spirit_defense";
 import { Config_Holy_spirit_health } from "../Configs/Church/Config_Holy_spirit_health";
 
-export const ResourcesAmount = HCL.HordeClassLibrary.World.Simple.ResourcesAmount;
-
 class BotUnitType {
     config : typeof IConfig;
     attackType : BuffOptTargetType;
@@ -47,16 +45,16 @@ class BotBuildingType {
     /** ид конфиг строения */
     cfgUid: string;
     /** полная стоимость создания данного здания с нуля */
-    totalCost: any;
+    totalCost: ResourcesAmount;
     /** стоимость улучшения до текущего от предыдущего */
-    upgradeCost: any;
+    upgradeCost: ResourcesAmount;
     /** номер предыдущего строения в дереве улучшений */
     upgradePrevBuildingId: number;
     
     /** тип атаки юнита спавнующего */
     spawnedUnitAttackType: BuffOptTargetType;
 
-    constructor(cfgUid: string, totalCost: any, upgradeCost: any, upgradePrevBuildingId: number, spawnedUnitAttackType: BuffOptTargetType) {
+    constructor(cfgUid: string, totalCost: ResourcesAmount, upgradeCost: ResourcesAmount, upgradePrevBuildingId: number, spawnedUnitAttackType: BuffOptTargetType) {
         this.cfgUid                = cfgUid;
         this.totalCost             = totalCost;
         this.upgradeCost           = upgradeCost;
@@ -81,7 +79,7 @@ enum BotBuildState {
 
 class IBot {
     static LogLevel: BotLogLevel = BotLogLevel.Error;
-    static TestBuildingCfg: any  = HordeContentApi.GetUnitConfig("#UnitConfig_Slavyane_Test_Building");
+    static TestBuildingCfg: UnitConfig  = HordeContentApi.GetUnitConfig("#UnitConfig_Slavyane_Test_Building");
 
     static Buildings            : Array<BotBuildingType>;
     static op_unitCfgId_buildingId : Map<string, number>;
@@ -216,24 +214,26 @@ class IBot {
     settlementId: number;
     /** имя бота */
     name: string;
-    /** сущность поселения */
+    /** сущность поселения */ // @ts-expect-error
     settlement_entity: Entity;
-    /** сущности рабочих */
+    /** сущности рабочих */ // @ts-expect-error
     workers_entity: Array<Entity>;
     /** юниты церквей */
-    churchs_unit: Array<any>;
+    churchs_unit: Array<Unit>;
     /** юниты лагерей наемников */
-    mercenaries_unit: Array<any>;
+    mercenaries_unit: Array<Unit>;
 
     constructor(settlementId: number, name: string) {
         this.settlementId      = settlementId;
         this.name              = name;
         this._building_goal_Id = -1;
-        this.churchs_unit      = new Array<any>();
-        this.mercenaries_unit  = new Array<any>();
+        this.churchs_unit      = new Array<Unit>();
+        this.mercenaries_unit  = new Array<Unit>();
     }
 
+    // @ts-expect-error
     world: World;
+    // @ts-expect-error
     gameTickNum: number;
 
     public run(world: World, gameTickNum: number) : void {
@@ -314,16 +314,16 @@ class IBot {
 
     /** целевое строение */
     private _building_goal_Id: number;
-    /** состояние постройки */
+    /** состояние постройки */ // @ts-expect-error
     private _buildingState: BotBuildState;
-    /** текущая рассматриваемая постройка (через это можно улучшить существующее здание) */
-    private _building_curr_unit: any;
-    private _building_cell : Cell | null;
-    private _building_curr_baseEntity: Entity | null;
-    private _building_curr_id: number | null;
-    private _building_next_id: number | null;
+    /** текущая рассматриваемая постройка (через это можно улучшить существующее здание) */ // @ts-expect-error
+    private _building_curr_unit: Unit | null;
+    private _building_cell : Cell | null = null;
+    private _building_curr_baseEntity: Entity | null = null;
+    private _building_curr_id: number | null = null;
+    private _building_next_id: number | null = null;
 
-    protected _setNextBuilding(building_goal_Id: number, building_unit: any = null): void {
+    protected _setNextBuilding(building_goal_Id: number, building_unit?: Unit | null): void {
         this._building_goal_Id = building_goal_Id;
 
         if (building_unit) {
@@ -341,7 +341,7 @@ class IBot {
 
             // инициализируем точку постройку
 
-            this._building_cell = new Cell(this._building_curr_unit.Cell.X, this._building_curr_unit.producedUnit.Cell.Y);
+            this._building_cell = new Cell(this._building_curr_unit.Cell.X, this._building_curr_unit.Cell.Y);
         } else {
             this._buildingState      = BotBuildState.AccMoney;
         }
@@ -395,10 +395,12 @@ class IBot {
 
         // проверка, что хватает денег на размещение здания
         
-        if (IBot.Buildings[this._building_curr_id].totalCost.Gold <= this.world.settlements[this.settlementId].Resources.Gold &&
-            IBot.Buildings[this._building_curr_id].totalCost.Metal <= this.world.settlements[this.settlementId].Resources.Metal &&
-            IBot.Buildings[this._building_curr_id].totalCost.Lumber <= this.world.settlements[this.settlementId].Resources.Lumber &&
-            IBot.Buildings[this._building_curr_id].totalCost.People <= this.world.settlements[this.settlementId].Resources.FreePeople) {
+        var botSettlement = this.world.settlements[this.settlementId];
+        if (botSettlement &&
+            IBot.Buildings[this._building_curr_id].totalCost.Gold <= botSettlement.Resources.Gold &&
+            IBot.Buildings[this._building_curr_id].totalCost.Metal <= botSettlement.Resources.Metal &&
+            IBot.Buildings[this._building_curr_id].totalCost.Lumber <= botSettlement.Resources.Lumber &&
+            IBot.Buildings[this._building_curr_id].totalCost.People <= botSettlement.Resources.FreePeople) {
             this._buildingState = BotBuildState.Place;
             this.Log(BotLogLevel.Debug, "накопили денег, можно устанавливать здание");
         }
@@ -415,7 +417,7 @@ class IBot {
         for (var i = 0; i < this.workers_entity.length; i++) {
             var unitComponent = this.workers_entity[i].components.get(COMPONENT_TYPE.UNIT_COMPONENT) as UnitComponent;
 
-            if (unitComponent.unit.IsDead) {
+            if (!unitComponent.unit || unitComponent.unit.IsDead) {
                 continue;
             }
 
@@ -425,6 +427,7 @@ class IBot {
             }
 
             // проверка, что рабочий ничего не строит
+            // @ts-expect-error
             if (unitComponent.unit.OrdersMind.ActiveAct.GetType().Name == "ActProduce") {
                 break;
             }
@@ -477,7 +480,7 @@ class IBot {
     private _buildBuilding(): void {
         // проверяем не уничтожили ли здание, тогда прерываем постройку
 
-        if (this._building_curr_unit.IsDead) {
+        if (!this._building_curr_unit || this._building_curr_unit.IsDead) {
             this.Log(BotLogLevel.Debug, "строящееся здание уничтожили, переходим к новой стратегии");
             this._buildClear();
             
@@ -495,16 +498,19 @@ class IBot {
             for (var i = 0; i < this.workers_entity.length; i++) {
                 var unitComponent = this.workers_entity[i].components.get(COMPONENT_TYPE.UNIT_COMPONENT) as UnitComponent;
 
-                if (unitComponent.unit.IsDead) {
+                if (!unitComponent.unit || unitComponent.unit.IsDead) {
                     continue;
                 }
 
                 this.Log(BotLogLevel.Debug, "рабочий не мертв");
+                // @ts-expect-error
                 if (!unitComponent.unit.OrdersMind.ActiveOrder.ProductUnit) {
                     continue;
                 }
 
+                // @ts-expect-error
                 this.Log(BotLogLevel.Debug, "рабочий строит Id " + unitComponent.unit.OrdersMind.ActiveOrder.ProductUnit.Id + " (а нужно " + this._building_curr_unit.Id + ") Name " + unitComponent.unit.OrdersMind.ActiveOrder.ProductUnit.Cfg.Name);
+                // @ts-expect-error
                 if (unitComponent.unit.OrdersMind.ActiveOrder.ProductUnit.Id != this._building_curr_unit.Id) {
                     continue;
                 }
@@ -521,7 +527,7 @@ class IBot {
                 for (var i = 0; i < this.workers_entity.length; i++) {
                     var unitComponent = this.workers_entity[i].components.get(COMPONENT_TYPE.UNIT_COMPONENT) as UnitComponent;
 
-                    if (unitComponent.unit.IsDead) {
+                    if (!unitComponent.unit || unitComponent.unit.IsDead) {
                         continue;
                     }
 
@@ -627,10 +633,12 @@ class IBot {
 
         // проверяем хватает ли денег на улучшение
 
-        if (IBot.Buildings[this._building_next_id].upgradeCost.Gold <= this.world.settlements[this.settlementId].Resources.Gold &&
-            IBot.Buildings[this._building_next_id].upgradeCost.Metal <= this.world.settlements[this.settlementId].Resources.Metal &&
-            IBot.Buildings[this._building_next_id].upgradeCost.Lumber <= this.world.settlements[this.settlementId].Resources.Lumber &&
-            IBot.Buildings[this._building_next_id].upgradeCost.People <= this.world.settlements[this.settlementId].Resources.FreePeople
+        var botSettlement = this.world.settlements[this.settlementId];
+        if (botSettlement &&
+            IBot.Buildings[this._building_next_id].upgradeCost.Gold <= botSettlement.Resources.Gold &&
+            IBot.Buildings[this._building_next_id].upgradeCost.Metal <= botSettlement.Resources.Metal &&
+            IBot.Buildings[this._building_next_id].upgradeCost.Lumber <= botSettlement.Resources.Lumber &&
+            IBot.Buildings[this._building_next_id].upgradeCost.People <= botSettlement.Resources.FreePeople
         ) {
             // улучшаем
 
@@ -655,7 +663,7 @@ class IBot {
     private _repairBuilding(): void {
         // ищем постройки, которые нужно чинить
 
-        var brokenBuildings_unit : Array<any> = [];
+        var brokenBuildings_unit : Array<Unit> = [];
 
         for (var i = 0; i < this.world.settlements_entities[this.settlementId].length; i++) {
             var entity : Entity = this.world.settlements_entities[this.settlementId][i];
@@ -666,7 +674,7 @@ class IBot {
 
             var unitComponent = entity.components.get(COMPONENT_TYPE.UNIT_COMPONENT) as UnitComponent;
 
-            if (!unitComponent.unit.Cfg.IsBuilding) {
+            if (!unitComponent.unit || !unitComponent.unit.Cfg.IsBuilding) {
                 continue;
             }
 
@@ -694,7 +702,7 @@ class IBot {
         for (var i = 0; i < this.workers_entity.length; i++) {
             var unitComponent = this.workers_entity[i].components.get(COMPONENT_TYPE.UNIT_COMPONENT) as UnitComponent;
 
-            if (unitComponent.unit.IsDead) {
+            if (!unitComponent.unit || unitComponent.unit.IsDead) {
                 continue;
             }
 
@@ -791,8 +799,14 @@ class IBot {
         for (var i = 0; i < spirits_targetUnitComponent.length; i++) {
             var unitComponent = spirits_entity[i].components.get(COMPONENT_TYPE.UNIT_COMPONENT) as UnitComponent;
 
+            var targetUnit = spirits_targetUnitComponent[i].unit;
+            if (!targetUnit) {
+                continue;
+            }
+
             // даем команды
-            var pointCommandArgs = new PointCommandArgs(createPoint(spirits_targetUnitComponent[i].unit.Cell.X, spirits_targetUnitComponent[i].unit.Cell.Y), UnitCommand.Attack, AssignOrderMode.Replace);
+            var pointCommandArgs = new PointCommandArgs(createPoint(targetUnit.Cell.X, targetUnit.Cell.Y), UnitCommand.Attack, AssignOrderMode.Replace);
+            // @ts-expect-error
             unitComponent.unit.Cfg.GetOrderDelegate(unitComponent.unit, pointCommandArgs);
         }
     }
@@ -866,7 +880,7 @@ class IBot {
 
 class RandomBot extends IBot {
     // Рандомизатор
-    rnd : any;
+    rnd : HordeResurrection.Basic.Primitives.HordeRandomizer;
     // номер текущей постройки
     buildingCurrNum: number;
     // номера зданий, который строит бот
@@ -884,8 +898,13 @@ class RandomBot extends IBot {
     }
 
     protected _selectNextBuilding(): void {
+        var botSettlement = this.world.settlements[this.settlementId];
+        if (!botSettlement) {
+            return;
+        }
+
         // вычисляем сколько есть дерева на покупку
-        var totalLumber = this.world.settlements[this.settlementId].Resources.Lumber;
+        var totalLumber = botSettlement.Resources.Lumber;
         if (this.settlement_entity.components.has(COMPONENT_TYPE.INCOME_LIMITED_PERIODICAL_COMPONENT)) {
             var incomeComponent = this.settlement_entity.components.get(COMPONENT_TYPE.INCOME_LIMITED_PERIODICAL_COMPONENT) as IncomeLimitedPeriodicalComponent;
             totalLumber += incomeComponent.totalLumber;
@@ -948,7 +967,7 @@ class RandomBot extends IBot {
         return this.rnd.RandomNumber(0, IBot.Church_spirits_unit.length - 1);
     }
 
-    protected _selectNextMercenaryUnitNum(): any {
+    protected _selectNextMercenaryUnitNum(): number {
         return this.rnd.RandomNumber(0, IBot.Mercenary_units.length - 1);
     }
 

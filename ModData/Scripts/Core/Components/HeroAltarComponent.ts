@@ -2,6 +2,7 @@ import { UnitProducerProfessionParams, UnitProfession } from "library/game-logic
 import { OpCfgUidToCfg } from "../Configs/IConfig";
 import { CfgAddUnitProducer } from "../Utils";
 import { IComponent, COMPONENT_TYPE } from "./IComponent";
+import { UnitConfig } from "library/game-logic/horde-types";
 
 /** Компонент для алтаря героя */
 export class HeroAltarComponent extends IComponent {
@@ -25,13 +26,14 @@ export class HeroAltarComponent extends IComponent {
         return new HeroAltarComponent(this.heroesCfgIdxs, this.selectedHeroNum);
     }
 
-    public InitConfig(cfg : any) {
+    public InitConfig(cfg : UnitConfig) {
         super.InitConfig(cfg);
 
         // даем профессию найма юнитов
         CfgAddUnitProducer(cfg);
 
         var producerParams = cfg.GetProfessionParams(UnitProducerProfessionParams, UnitProfession.UnitProducer);
+        // @ts-expect-error
         var produceList    = producerParams.CanProduceList;
         for (var heroCfgId of this.heroesCfgIdxs) {
             produceList.Add(OpCfgUidToCfg[heroCfgId]);

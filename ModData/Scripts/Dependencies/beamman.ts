@@ -9,6 +9,7 @@ import HordePluginBase from "plugins/base-plugin";
  * Плагин для обработки юнита "Воин с дубиной".
  */
 export class BeammanPlugin extends HordePluginBase {
+    // @ts-expect-error
     private hitTable;
     private hitSounds: any;
 
@@ -34,7 +35,7 @@ export class BeammanPlugin extends HordePluginBase {
     /**
      * Обработчик состояния Hit для воина с дубиной
      */
-    private stateWorker_Hit(u) {
+    private stateWorker_Hit(u: any) {
         let motion = u.OrdersMind.ActiveMotion;  // Здесь MotionHit
         if (motion.IsUnprepared)
         {
@@ -85,7 +86,7 @@ export class BeammanPlugin extends HordePluginBase {
     /**
      * Выполняет один удар.
      */
-    private makeOneHit(u, motion, hitNum) {
+    private makeOneHit(u:any, motion:any, hitNum:number) {
         // Смещения координат удара относительно центра воина в зависимости от направления
         let hits = this.hitTable[u.Direction.ToString()];
         if (!hits) {

@@ -9,6 +9,8 @@ export class HeroComponent extends IComponent {
 
     public constructor () {
         super(COMPONENT_TYPE.HERO_COMPONENT);
+        this.kills = 0;
+        this.level = 0;
     }
 
     public Clone() : HeroComponent {
