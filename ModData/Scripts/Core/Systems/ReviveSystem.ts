@@ -1,6 +1,6 @@
 import { generateCellInSpiral } from "library/common/position-tools";
 import { UnitDirection } from "library/game-logic/horde-types";
-import { OpCfgUidToCfg } from "../Configs/IConfig";
+import { GetCfgUidToCfg } from "../Configs/IConfig";
 import { spawnUnits } from "../Utils";
 import { World } from "../World";
 import { COMPONENT_TYPE } from "../Components/IComponent";
@@ -33,7 +33,7 @@ export function ReviveSystem(world: World, gameTickNum: number) {
                     if (reviveComponent.tick < gameTickNum) {
                         reviveComponent.waitingToRevive = false;
                         var generator      = generateCellInSpiral(reviveComponent.cell.X, reviveComponent.cell.Y);
-                        unitComponent.unit = spawnUnits(settlement, OpCfgUidToCfg[unitComponent.cfgUid], 1, UnitDirection.Down, generator)[0];
+                        unitComponent.unit = spawnUnits(settlement, GetCfgUidToCfg(unitComponent.cfgUid), 1, UnitDirection.Down, generator)[0];
                     }
                 }
                 // регистрируем смерть и запускаем обратный отсчет до воскрешения

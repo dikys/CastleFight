@@ -1,5 +1,5 @@
 import { UnitProducerProfessionParams, UnitProfession } from "library/game-logic/unit-professions";
-import { OpCfgUidToCfg } from "../Configs/IConfig";
+import { HasCfgUidToCfg, GetCfgUidToCfg, SetCfgUidToCfg } from "../Configs/IConfig";
 import { CfgAddUnitProducer, CreateUnitConfig } from "../Utils";
 import { IComponent, COMPONENT_TYPE } from "./IComponent";
 import { UnitConfig } from "library/game-logic/horde-types";
@@ -41,24 +41,23 @@ export class SpawnBuildingComponent extends IComponent {
         var producerParams = cfg.GetProfessionParams(UnitProducerProfessionParams, UnitProfession.UnitProducer);
         // @ts-expect-error
         var produceList    = producerParams.CanProduceList;
-        produceList.Add(OpCfgUidToCfg[SpawnBuildingComponent.resetSpawnCfgUid]);
+        produceList.Add(GetCfgUidToCfg(SpawnBuildingComponent.resetSpawnCfgUid));
 
         // добавляем описание спавнующего юнита
-        var spawnUnitCfg = OpCfgUidToCfg[this.spawnUnitConfigUid];
+        var spawnUnitCfg = GetCfgUidToCfg(this.spawnUnitConfigUid);
         ScriptUtils.SetValue(cfg, "Description", cfg.Description + (cfg.Description == "" ? "" : "\n") +
             "Тренирует: " + spawnUnitCfg.Name + "\n" +
             spawnUnitCfg.Description);
     }
 
     public InitResetSpawnCfg() {
-        if (OpCfgUidToCfg[SpawnBuildingComponent.resetSpawnCfgUid] != undefined) {
+        if (HasCfgUidToCfg(SpawnBuildingComponent.resetSpawnCfgUid)) {
             return;
         }
 
         // создаем конфиг
-        OpCfgUidToCfg[SpawnBuildingComponent.resetSpawnCfgUid] = CreateUnitConfig("#UnitConfig_Slavyane_Swordmen", SpawnBuildingComponent.resetSpawnCfgUid);
-        
-        var cfg = OpCfgUidToCfg[SpawnBuildingComponent.resetSpawnCfgUid];
+        var cfg = CreateUnitConfig("#UnitConfig_Slavyane_Swordmen", SpawnBuildingComponent.resetSpawnCfgUid);
+        SetCfgUidToCfg(SpawnBuildingComponent.resetSpawnCfgUid, cfg);
 
         // имя
         ScriptUtils.SetValue(cfg, "Name", "Перезапустить найм");

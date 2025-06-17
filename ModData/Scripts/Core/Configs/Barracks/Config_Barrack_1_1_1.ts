@@ -1,5 +1,5 @@
 import { createHordeColor } from "library/common/primitives";
-import { OpCfgUidToCfg } from "../IConfig";
+import { GetCfgUidToCfg } from "../IConfig";
 import { IBarrack } from "./IBarrack";
 import { IAttackingUnit } from "../IAttackingUnit";
 import { Config_Barrack_1_1_1_1 } from "./Config_Barrack_1_1_1_1";
@@ -12,14 +12,15 @@ export class Config_Unit_1_1_1 extends IAttackingUnit {
     constructor() { super(); }
 
     public static InitConfig() {
-        IAttackingUnit.InitConfig.call(this);
+        super.InitConfig();
+        var config = GetCfgUidToCfg(this.CfgUid);
 
         // здоровье
-        ScriptUtils.SetValue(OpCfgUidToCfg[this.CfgUid], "MaxHealth", 3000);
+        ScriptUtils.SetValue(config, "MaxHealth", 3000);
         // броня
-        ScriptUtils.SetValue(OpCfgUidToCfg[this.CfgUid], "Shield", 100);
+        ScriptUtils.SetValue(config, "Shield", 100);
         // урон
-        ScriptUtils.SetValue(OpCfgUidToCfg[this.CfgUid].MainArmament.ShotParams, "Damage", 1000);
+        ScriptUtils.SetValue(config.MainArmament.ShotParams, "Damage", 1000);
     }
 }
 
@@ -33,11 +34,12 @@ export class Config_Barrack_1_1_1 extends IBarrack {
     constructor() { super(); }
 
     public static InitConfig() {
-        IBarrack.InitConfig.call(this);
+        super.InitConfig();
+        var config = GetCfgUidToCfg(this.CfgUid);
 
         // имя
-        ScriptUtils.SetValue(OpCfgUidToCfg[this.CfgUid], "Name", "Лаборатория огня");
+        ScriptUtils.SetValue(config, "Name", "Лаборатория огня");
         // меняем цвет
-        ScriptUtils.SetValue(OpCfgUidToCfg[this.CfgUid], "TintColor", createHordeColor(255, 200, 0, 0));
+        ScriptUtils.SetValue(config, "TintColor", createHordeColor(255, 200, 0, 0));
     }
 }

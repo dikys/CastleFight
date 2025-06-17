@@ -1,5 +1,5 @@
 import { spawnDecoration } from "library/game-logic/decoration-spawn";
-import { OpCfgUidToCfg } from "../Configs/IConfig";
+import { GetCfgUidToCfg } from "../Configs/IConfig";
 import { World } from "../World";
 import { COMPONENT_TYPE } from "../Components/IComponent";
 import { UnitComponent } from "../Components/UnitComponent";
@@ -35,14 +35,14 @@ export function UpgradableBuildingSystem(world: World, gameTickNum: number) {
                     for (var upgradeId = 0; upgradeId < upgradableBuildingComponent.upgradesCfgUid.length; upgradeId++) {
                         var iconUpgradeCfgId = UpgradableBuildingComponent.GetUpgradeCfgUid(upgradableBuildingComponent.upgradesCfgUid[upgradeId]);
                         
-                        if (buildingCfg.Uid != OpCfgUidToCfg[iconUpgradeCfgId].Uid) {
+                        if (buildingCfg.Uid != GetCfgUidToCfg(iconUpgradeCfgId).Uid) {
                             continue;
                         }
 
                         // заменяем постройку на улучшенную
                         let replaceParams = new ReplaceUnitParameters();
                         replaceParams.OldUnit = unitComponent.unit;
-                        replaceParams.NewUnitConfig = OpCfgUidToCfg[upgradableBuildingComponent.upgradesCfgUid[upgradeId]];
+                        replaceParams.NewUnitConfig = GetCfgUidToCfg(upgradableBuildingComponent.upgradesCfgUid[upgradeId]);
                         replaceParams.Cell = null;                   // Можно задать клетку, в которой должен появиться новый юнит. Если null, то центр создаваемого юнита совпадет с предыдущим
                         replaceParams.PreserveHealthLevel = false;   // Нужно ли передать уровень здоровья? (в процентном соотношении)
                         replaceParams.PreserveOrders = false;        // Нужно ли передать приказы?

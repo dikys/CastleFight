@@ -1,5 +1,5 @@
 import { UnitProducerProfessionParams, UnitProfession } from "library/game-logic/unit-professions";
-import { IConfig, OpCfgUidToCfg } from "../IConfig";
+import { IConfig, GetCfgUidToCfg } from "../IConfig";
 import { Config_Mercenary_Swordmen } from "./Config_Mercenary_Swordmen";
 import { Config_Mercenary_Archer } from "./Config_Mercenary_Archer";
 import { Config_Mercenary_Archer_2 } from "./Config_Mercenary_Archer_2";
@@ -15,37 +15,39 @@ export class Config_MercenaryCamp extends IConfig {
     constructor() { super(); }
 
     public static InitEntity() {
-        IConfig.InitEntity.call(this);
+        super.InitEntity();
 
         this.Entity.components.set(COMPONENT_TYPE.UNIT_COMPONENT, new UnitComponent(null, this.CfgUid));
     }
 
     public static InitConfig() {
-        IConfig.InitConfig.call(this);
+        super.InitConfig();
+        var config = GetCfgUidToCfg(this.CfgUid);
 
         // имя
-        ScriptUtils.SetValue(OpCfgUidToCfg[this.CfgUid], "Name", "Лагерь наёмников");
+        ScriptUtils.SetValue(config, "Name", "Лагерь наёмников");
         // описание
-        ScriptUtils.SetValue(OpCfgUidToCfg[this.CfgUid], "Description", "Позволяет нанять могучих войнов Теймура. Теймуровцы не верят в нашу веру, поэтому святые духи на них не действуют.");
+        ScriptUtils.SetValue(config, "Description", "Позволяет нанять могучих войнов Теймура. Теймуровцы не верят в нашу веру, поэтому святые духи на них не действуют.");
         // здоровье
-        ScriptUtils.SetValue(OpCfgUidToCfg[this.CfgUid], "MaxHealth", 60000);
+        ScriptUtils.SetValue(config, "MaxHealth", 60000);
         // броня
-        ScriptUtils.SetValue(OpCfgUidToCfg[this.CfgUid], "Shield", 300);
+        ScriptUtils.SetValue(config, "Shield", 300);
         // стоимость
-        ScriptUtils.SetValue(OpCfgUidToCfg[this.CfgUid].CostResources, "Gold",   500);
-        ScriptUtils.SetValue(OpCfgUidToCfg[this.CfgUid].CostResources, "Metal",  0);
-        ScriptUtils.SetValue(OpCfgUidToCfg[this.CfgUid].CostResources, "Lumber", 0);
-        ScriptUtils.SetValue(OpCfgUidToCfg[this.CfgUid].CostResources, "People", 0);
+        ScriptUtils.SetValue(config.CostResources, "Gold",   500);
+        ScriptUtils.SetValue(config.CostResources, "Metal",  0);
+        ScriptUtils.SetValue(config.CostResources, "Lumber", 0);
+        ScriptUtils.SetValue(config.CostResources, "People", 0);
         // наемники
         {
-            var producerParams = OpCfgUidToCfg[this.CfgUid].GetProfessionParams(UnitProducerProfessionParams, UnitProfession.UnitProducer);
+            var producerParams = config.GetProfessionParams(UnitProducerProfessionParams, UnitProfession.UnitProducer);
+            // @ts-expect-error
             var produceList    = producerParams.CanProduceList;
             produceList.Clear();
-            produceList.Add(OpCfgUidToCfg[Config_Mercenary_Swordmen.CfgUid]);
-            produceList.Add(OpCfgUidToCfg[Config_Mercenary_Archer.CfgUid]);
-            produceList.Add(OpCfgUidToCfg[Config_Mercenary_Heavymen.CfgUid]);
-            produceList.Add(OpCfgUidToCfg[Config_Mercenary_Archer_2.CfgUid]);
-            produceList.Add(OpCfgUidToCfg[Config_Mercenary_Raider.CfgUid]);
+            produceList.Add(GetCfgUidToCfg(Config_Mercenary_Swordmen.CfgUid));
+            produceList.Add(GetCfgUidToCfg(Config_Mercenary_Archer.CfgUid));
+            produceList.Add(GetCfgUidToCfg(Config_Mercenary_Heavymen.CfgUid));
+            produceList.Add(GetCfgUidToCfg(Config_Mercenary_Archer_2.CfgUid));
+            produceList.Add(GetCfgUidToCfg(Config_Mercenary_Raider.CfgUid));
         }
     }
 }

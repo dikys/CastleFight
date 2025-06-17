@@ -1,4 +1,4 @@
-import { IConfig, OpCfgUidToCfg } from "../IConfig";
+import { IConfig, GetCfgUidToCfg } from "../IConfig";
 import { IAttackingUnit } from "../IAttackingUnit";
 import { COMPONENT_TYPE } from "../../Components/IComponent";
 import { SpawnBuildingComponent } from "../../Components/SpawnBuildingComponent";
@@ -14,7 +14,7 @@ export class IBarrack extends IConfig {
     constructor() { super(); }
 
     public static InitEntity() {
-        IConfig.InitEntity.call(this);
+        super.InitEntity();
 
         this.Entity.components.set(COMPONENT_TYPE.UNIT_COMPONENT, new UnitComponent(null, this.CfgUid));
         this.Entity.components.set(COMPONENT_TYPE.SPAWN_BUILDING_COMPONENT, new SpawnBuildingComponent(this.spawnedUnit.CfgUid, -1, this.spawnPeriod, this.spawnCount));
@@ -29,18 +29,19 @@ export class IBarrack extends IConfig {
     }
 
     public static InitConfig() {
-        IConfig.InitConfig.call(this);
+        super.InitConfig();
+        var config = GetCfgUidToCfg(this.CfgUid);
 
         // стоимость обычного улучшаемого здания
-        ScriptUtils.SetValue(OpCfgUidToCfg[this.CfgUid].CostResources, "Gold",   100);
-        ScriptUtils.SetValue(OpCfgUidToCfg[this.CfgUid].CostResources, "Metal",  0);
-        ScriptUtils.SetValue(OpCfgUidToCfg[this.CfgUid].CostResources, "Lumber", 100);
-        ScriptUtils.SetValue(OpCfgUidToCfg[this.CfgUid].CostResources, "People", 0);
+        ScriptUtils.SetValue(config.CostResources, "Gold",   100);
+        ScriptUtils.SetValue(config.CostResources, "Metal",  0);
+        ScriptUtils.SetValue(config.CostResources, "Lumber", 100);
+        ScriptUtils.SetValue(config.CostResources, "People", 0);
         // здоровье
-        ScriptUtils.SetValue(OpCfgUidToCfg[this.CfgUid], "MaxHealth", 60000);
+        ScriptUtils.SetValue(config, "MaxHealth", 60000);
         // броня
-        ScriptUtils.SetValue(OpCfgUidToCfg[this.CfgUid], "Shield", 0);
+        ScriptUtils.SetValue(config, "Shield", 0);
         // время постройки улучшения
-        ScriptUtils.SetValue(OpCfgUidToCfg[this.CfgUid], "ProductionTime", 500);
+        ScriptUtils.SetValue(config, "ProductionTime", 500);
     }
 }

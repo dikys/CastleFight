@@ -414,7 +414,7 @@ export class Scena9 extends IScena {
         ]
     ];
     public static Init() {
-        IScena.Init.call(this);
+        super.Init();
         this.settlements_attackPathChoiser = new Array<IAttackPathChoiser>(this.settlementsCount);
         for (var settlementId = 0; settlementId < this.settlementsCount; settlementId++) {
             this.settlements_attackPathChoiser[settlementId] = new AttackPathChoiser_Periodically_WithCondCell([
@@ -498,7 +498,7 @@ export class Scena10 extends IScena {
         ]
     ];
     public static Init() {
-        IScena.Init.call(this);
+        super.Init();
         this.settlements_attackPathChoiser = new Array<IAttackPathChoiser>(this.settlementsCount);
         for (var settlementId = 0; settlementId < this.settlementsCount; settlementId++) {
             this.settlements_attackPathChoiser[settlementId] = new AttackPathChoiser_Periodically_WithCondCell([

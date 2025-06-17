@@ -5,7 +5,7 @@ import { Cell } from "../Utils";
 import { Config_Barrack_1 } from "./Barracks/Config_Barrack_1";
 import { Config_Barrack_2 } from "./Barracks/Config_Barrack_2";
 import { Config_Church } from "./Church/Config_Church";
-import { IConfig, OpCfgUidToCfg } from "./IConfig";
+import { IConfig, GetCfgUidToCfg } from "./IConfig";
 import { Config_MercenaryCamp } from "./Mercenary/Config_MercenaryCamp";
 import { COMPONENT_TYPE } from "../Components/IComponent";
 import { ReviveComponent } from "../Components/ReviveComponent";
@@ -19,41 +19,43 @@ export class Config_Worker extends IConfig {
     constructor() { super(); }
 
     public static InitEntity() {
-        IConfig.InitEntity.call(this);
+        super.InitEntity();
 
         this.Entity.components.set(COMPONENT_TYPE.UNIT_COMPONENT, new UnitComponent(null, this.CfgUid));
         this.Entity.components.set(COMPONENT_TYPE.REVIVE_COMPONENT, new ReviveComponent(new Cell(0,0), 500, -1));
     }
 
     public static InitConfig() {
-        IConfig.InitConfig.call(this);
+        super.InitConfig();
+        var config = GetCfgUidToCfg(this.CfgUid);
 
         // устанавливаем имя
-        ScriptUtils.SetValue(OpCfgUidToCfg[this.CfgUid], "Name", "Работяга");
+        ScriptUtils.SetValue(config, "Name", "Работяга");
         // удаляем команду атаки
-        OpCfgUidToCfg[this.CfgUid].AllowedCommands.Remove(UnitCommand.Attack);
+        config.AllowedCommands.Remove(UnitCommand.Attack);
         // здоровье
-        ScriptUtils.SetValue(OpCfgUidToCfg[this.CfgUid], "MaxHealth", 2000);
+        ScriptUtils.SetValue(config, "MaxHealth", 2000);
         // число людей
-        ScriptUtils.SetValue(OpCfgUidToCfg[this.CfgUid].CostResources, "People", 0);
+        ScriptUtils.SetValue(config.CostResources, "People", 0);
         // добавляем иммун к огню
-        ScriptUtils.SetValue(OpCfgUidToCfg[this.CfgUid], "Flags", mergeFlags(UnitFlags, OpCfgUidToCfg[this.CfgUid].Flags, UnitFlags.FireResistant));
+        ScriptUtils.SetValue(config, "Flags", mergeFlags(UnitFlags, config.Flags, UnitFlags.FireResistant));
         // убираем профессию добычу
-        if (OpCfgUidToCfg[this.CfgUid].ProfessionParams.ContainsKey(UnitProfession.Harvester)) {
-            OpCfgUidToCfg[this.CfgUid].ProfessionParams.Remove(UnitProfession.Harvester);
+        if (config.ProfessionParams.ContainsKey(UnitProfession.Harvester)) {
+            config.ProfessionParams.Remove(UnitProfession.Harvester);
         }
         // делаем его не даващимся
-        ScriptUtils.SetValue(OpCfgUidToCfg[this.CfgUid], "PressureResist", 13);
+        ScriptUtils.SetValue(config, "PressureResist", 13);
         
         // добавляем постройки
         {
-            var producerParams = OpCfgUidToCfg[this.CfgUid].GetProfessionParams(UnitProducerProfessionParams, UnitProfession.UnitProducer);
+            var producerParams = config.GetProfessionParams(UnitProducerProfessionParams, UnitProfession.UnitProducer);
+            // @ts-expect-error
             var produceList    = producerParams.CanProduceList;
             produceList.Clear();
-            produceList.Add(OpCfgUidToCfg[Config_Barrack_1.CfgUid]);
-            produceList.Add(OpCfgUidToCfg[Config_Barrack_2.CfgUid]);
-            produceList.Add(OpCfgUidToCfg[Config_Church.CfgUid]);
-            produceList.Add(OpCfgUidToCfg[Config_MercenaryCamp.CfgUid]);
+            produceList.Add(GetCfgUidToCfg(Config_Barrack_1.CfgUid));
+            produceList.Add(GetCfgUidToCfg(Config_Barrack_2.CfgUid));
+            produceList.Add(GetCfgUidToCfg(Config_Church.CfgUid));
+            produceList.Add(GetCfgUidToCfg(Config_MercenaryCamp.CfgUid));
         }
     }
 }

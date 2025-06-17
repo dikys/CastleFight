@@ -1,7 +1,7 @@
 import { BUFF_TYPE, BuffableComponent } from "../Components/BuffableComponent";
 import { COMPONENT_TYPE } from "../Components/IComponent";
 import { UnitComponent } from "../Components/UnitComponent";
-import { OpCfgUidToCfg, IConfig } from "./IConfig";
+import { GetCfgUidToCfg, IConfig } from "./IConfig";
 
 export class Config_Tower extends IConfig {
     public static CfgUid      : string = "#CastleFight_Tower";
@@ -10,7 +10,7 @@ export class Config_Tower extends IConfig {
     constructor() { super(); }
 
     public static InitEntity() {
-        IConfig.InitEntity.call(this);
+        super.InitEntity();
 
         this.Entity.components.set(COMPONENT_TYPE.UNIT_COMPONENT, new UnitComponent(null, this.CfgUid));
         var buffMask = new Array<boolean>(BUFF_TYPE.SIZE);
@@ -22,22 +22,23 @@ export class Config_Tower extends IConfig {
     }
 
     public static InitConfig() {
-        IConfig.InitConfig.call(this);
+        super.InitConfig();
+        var config = GetCfgUidToCfg(this.CfgUid);
 
         // имя
-        ScriptUtils.SetValue(OpCfgUidToCfg[this.CfgUid], "Name", "Башня");
+        ScriptUtils.SetValue(config, "Name", "Башня");
         // описание
-        ScriptUtils.SetValue(OpCfgUidToCfg[this.CfgUid], "Description", "Защитное строение. Не допускайте катапульты. Можно усилить духами (кроме духа клонирования).");
+        ScriptUtils.SetValue(config, "Description", "Защитное строение. Не допускайте катапульты. Можно усилить духами (кроме духа клонирования).");
         // здоровье
-        ScriptUtils.SetValue(OpCfgUidToCfg[this.CfgUid], "MaxHealth", 60000);
+        ScriptUtils.SetValue(config, "MaxHealth", 60000);
         // броня
-        ScriptUtils.SetValue(OpCfgUidToCfg[this.CfgUid], "Shield", 300);
+        ScriptUtils.SetValue(config, "Shield", 300);
         // делаем урон = 0
-        ScriptUtils.SetValue(OpCfgUidToCfg[this.CfgUid].MainArmament.ShotParams, "Damage", 600);
+        ScriptUtils.SetValue(config.MainArmament.ShotParams, "Damage", 600);
         // стоимость
-        ScriptUtils.SetValue(OpCfgUidToCfg[this.CfgUid].CostResources, "Gold",   200);
-        ScriptUtils.SetValue(OpCfgUidToCfg[this.CfgUid].CostResources, "Metal",  0);
-        ScriptUtils.SetValue(OpCfgUidToCfg[this.CfgUid].CostResources, "Lumber", 200);
-        ScriptUtils.SetValue(OpCfgUidToCfg[this.CfgUid].CostResources, "People", 0);
+        ScriptUtils.SetValue(config.CostResources, "Gold",   200);
+        ScriptUtils.SetValue(config.CostResources, "Metal",  0);
+        ScriptUtils.SetValue(config.CostResources, "Lumber", 200);
+        ScriptUtils.SetValue(config.CostResources, "People", 0);
     }
 }

@@ -1,16 +1,13 @@
 import { BuffableComponent, BUFF_TYPE } from "../Components/BuffableComponent";
 import { COMPONENT_TYPE } from "../Components/IComponent";
 import { UnitComponent } from "../Components/UnitComponent";
-import { OpCfgUidToCfg } from "../Configs/IConfig";
+import { ClearCfgUidToCfg, GetCfgUidToCfg } from "../Configs/IConfig";
 import { World, GameState } from "../World";
 
 export function WordClearSystem(world: World, gameTickNum: number) {
     // если сейчас идет очистка мира, то удаляем кастомные конфиги
     if (world.state == GameState.CLEAR) {
-        for (var cfgId in OpCfgUidToCfg) {
-            HordeContentApi.RemoveConfig(OpCfgUidToCfg[cfgId]);
-            delete OpCfgUidToCfg[cfgId];
-        }
+        ClearCfgUidToCfg();
     }
 
     var killUnitsCount = 0;

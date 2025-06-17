@@ -1,5 +1,5 @@
 import { UnitProducerProfessionParams, UnitProfession } from "library/game-logic/unit-professions";
-import { OpCfgUidToCfg } from "../Configs/IConfig";
+import { GetCfgUidToCfg } from "../Configs/IConfig";
 import { CfgAddUnitProducer } from "../Utils";
 import { IComponent, COMPONENT_TYPE } from "./IComponent";
 import { UnitConfig } from "library/game-logic/horde-types";
@@ -36,7 +36,7 @@ export class HeroAltarComponent extends IComponent {
         // @ts-expect-error
         var produceList    = producerParams.CanProduceList;
         for (var heroCfgId of this.heroesCfgIdxs) {
-            produceList.Add(OpCfgUidToCfg[heroCfgId]);
+            produceList.Add(GetCfgUidToCfg(heroCfgId));
         }
     }
 };

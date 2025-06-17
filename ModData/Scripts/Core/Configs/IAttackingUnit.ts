@@ -1,6 +1,6 @@
 import { TileType, UnitFlags, UnitSpecification } from "library/game-logic/horde-types";
 import { CfgSetSpeed } from "../Utils";
-import { IConfig, OpCfgUidToCfg } from "./IConfig";
+import { IConfig, GetCfgUidToCfg } from "./IConfig";
 import { AttackingAlongPathComponent } from "../Components/AttackingAlongPathComponent";
 import { BuffableComponent } from "../Components/BuffableComponent";
 import { COMPONENT_TYPE } from "../Components/IComponent";
@@ -12,7 +12,7 @@ export class IAttackingUnit extends IConfig {
     constructor() { super(); }
 
     public static InitEntity() {
-        IConfig.InitEntity.call(this);
+        super.InitEntity();
 
         this.Entity.components.set(COMPONENT_TYPE.UNIT_COMPONENT, new UnitComponent(null, this.CfgUid));
         this.Entity.components.set(COMPONENT_TYPE.ATTACKING_ALONG_PATH_COMPONENT, new AttackingAlongPathComponent());
@@ -23,12 +23,13 @@ export class IAttackingUnit extends IConfig {
     }
 
     public static InitConfig() {
-        IConfig.InitConfig.call(this);
+        super.InitConfig();
+        var config = GetCfgUidToCfg(this.CfgUid);
 
         // устанавливаем скорость бега
         var speedMap = new Map<TileType, number>();
-        if (!OpCfgUidToCfg[this.CfgUid].Flags.HasFlag(UnitFlags.Building)) {
-            if (OpCfgUidToCfg[this.CfgUid].Specification.HasFlag(UnitSpecification.Rider)) {
+        if (!config.Flags.HasFlag(UnitFlags.Building)) {
+            if (config.Specification.HasFlag(UnitSpecification.Rider)) {
                 speedMap.set(TileType.Grass,  Math.round(this.speedCoeff * 20));
                 speedMap.set(TileType.Forest, Math.round(this.speedCoeff * 0));
                 speedMap.set(TileType.Water,  Math.round(this.speedCoeff * 0));
@@ -37,7 +38,7 @@ export class IAttackingUnit extends IConfig {
                 speedMap.set(TileType.Mounts, Math.round(this.speedCoeff * 0));
                 speedMap.set(TileType.Road,   Math.round(this.speedCoeff * 21));
                 speedMap.set(TileType.Ice,    Math.round(this.speedCoeff * 15));
-            } else if (OpCfgUidToCfg[this.CfgUid].Specification.HasFlag(UnitSpecification.Machine)) {
+            } else if (config.Specification.HasFlag(UnitSpecification.Machine)) {
                 speedMap.set(TileType.Grass,  Math.round(this.speedCoeff * 10));
                 speedMap.set(TileType.Water,  Math.round(this.speedCoeff * 0));
                 speedMap.set(TileType.Marsh,  Math.round(this.speedCoeff * 7));
@@ -56,38 +57,40 @@ export class IAttackingUnit extends IConfig {
                 speedMap.set(TileType.Ice,    Math.round(this.speedCoeff * 10));
             }
 
-            CfgSetSpeed(OpCfgUidToCfg[this.CfgUid], speedMap);
+            CfgSetSpeed(config, speedMap);
         }
     }
 
     private static _PostInitConfig() {
+        var config = GetCfgUidToCfg(this.CfgUid);
+
         // Ближники
-        if (OpCfgUidToCfg[this.CfgUid].MainArmament.Range == 1) {
-            ScriptUtils.SetValue(OpCfgUidToCfg[this.CfgUid], "MaxHealth", Math.floor(1.5 * OpCfgUidToCfg[this.CfgUid].MaxHealth));
-            ScriptUtils.SetValue(OpCfgUidToCfg[this.CfgUid], "Sight", 6);
+        if (config.MainArmament.Range == 1) {
+            ScriptUtils.SetValue(config, "MaxHealth", Math.floor(1.5 * config.MaxHealth));
+            ScriptUtils.SetValue(config, "Sight", 6);
         }
         // Дальники
         else {
-            ScriptUtils.SetValue(OpCfgUidToCfg[this.CfgUid], "Sight", 4);
+            ScriptUtils.SetValue(config, "Sight", 4);
         }
 
         // описание юнитов
-        ScriptUtils.SetValue(OpCfgUidToCfg[this.CfgUid], "Description",  OpCfgUidToCfg[this.CfgUid].Description +
-            (OpCfgUidToCfg[this.CfgUid].Description == "" ? "" : "\n") +
-            "  здоровье " + OpCfgUidToCfg[this.CfgUid].MaxHealth + "\n" +
-            "  броня " + OpCfgUidToCfg[this.CfgUid].Shield + "\n" +
+        ScriptUtils.SetValue(config, "Description",  config.Description +
+            (config.Description == "" ? "" : "\n") +
+            "  здоровье " + config.MaxHealth + "\n" +
+            "  броня " + config.Shield + "\n" +
             (
-                OpCfgUidToCfg[this.CfgUid].MainArmament
-                ? "  атака " + OpCfgUidToCfg[this.CfgUid].MainArmament.ShotParams.Damage + "\n" +
-                "  радиус атаки " + OpCfgUidToCfg[this.CfgUid].MainArmament.Range + "\n"
+                config.MainArmament
+                ? "  атака " + config.MainArmament.ShotParams.Damage + "\n" +
+                "  радиус атаки " + config.MainArmament.Range + "\n"
                 : ""
             ) +
-            "  скорость бега " + OpCfgUidToCfg[this.CfgUid].Speeds.Item(TileType.Grass) + "\n"
-            + (OpCfgUidToCfg[this.CfgUid].Flags.HasFlag(UnitFlags.FireResistant) || OpCfgUidToCfg[this.CfgUid].Flags.HasFlag(UnitFlags.MagicResistant)
-                ? "  иммунитет к " + (OpCfgUidToCfg[this.CfgUid].Flags.HasFlag(UnitFlags.FireResistant) ? "огню " : "") + 
-                    (OpCfgUidToCfg[this.CfgUid].Flags.HasFlag(UnitFlags.MagicResistant) ? "магии " : "") + "\n"
+            "  скорость бега " + config.Speeds.Item.get(TileType.Grass) + "\n"
+            + (config.Flags.HasFlag(UnitFlags.FireResistant) || config.Flags.HasFlag(UnitFlags.MagicResistant)
+                ? "  иммунитет к " + (config.Flags.HasFlag(UnitFlags.FireResistant) ? "огню " : "") + 
+                    (config.Flags.HasFlag(UnitFlags.MagicResistant) ? "магии " : "") + "\n"
                 : "")
-            + "  радиус видимости " + OpCfgUidToCfg[this.CfgUid].Sight
+            + "  радиус видимости " + config.Sight
             );
     }
 }

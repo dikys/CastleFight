@@ -2,7 +2,7 @@ import { UnitCommand, UnitSpecification } from "library/game-logic/horde-types";
 import { AssignOrderMode } from "library/mastermind/virtual-input";
 import { Cell, distance_Chebyshev, UnitGiveOrderToCell, UnitGiveOrderToNearEmptyCell } from "../Utils";
 import { World } from "../World";
-import { OpCfgUidToCfg } from "../Configs/IConfig";
+import { GetCfgUidToCfg } from "../Configs/IConfig";
 import { Config_Castle } from "../Configs/Config_Castle";
 import { AttackingAlongPathComponent } from "../Components/AttackingAlongPathComponent";
 import { COMPONENT_TYPE } from "../Components/IComponent";
@@ -101,7 +101,7 @@ export function AttackingAlongPathSystem_stage1(world: World, gameTickNum: numbe
                 unitComponent.unit.Cell.Y,
                 targetCastleUnit.Cell.X,
                 targetCastleUnit.Cell.Y);
-            if (distanceToCastle > 1.5*OpCfgUidToCfg[unitComponent.cfgUid].OrderDistance) {
+            if (distanceToCastle > 1.5*GetCfgUidToCfg(unitComponent.cfgUid).OrderDistance) {
                 continue;
             }
 
@@ -254,8 +254,8 @@ export function AttackingAlongPathSystem_stage2(world: World, gameTickNum: numbe
                     attackVector.Y *= vectorInvLength;
                     /** тип атаки юнита 0 - дальник, 1 ближник, 2 - всадник */
                     var unitAttackType = 
-                        OpCfgUidToCfg[unitComponent.cfgUid].MainArmament.Range > 1 ? 0
-                        : OpCfgUidToCfg[unitComponent.cfgUid].Specification.HasFlag(UnitSpecification.Rider) ? 1
+                        GetCfgUidToCfg(unitComponent.cfgUid).MainArmament.Range > 1 ? 0
+                        : GetCfgUidToCfg(unitComponent.cfgUid).Specification.HasFlag(UnitSpecification.Rider) ? 1
                         : 2;
 
                     // ищем врага, атакующего наш замок

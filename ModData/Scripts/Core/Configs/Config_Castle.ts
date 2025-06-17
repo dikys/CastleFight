@@ -1,5 +1,5 @@
 import { UnitCommand } from "library/game-logic/horde-types";
-import { OpCfgUidToCfg, IConfig } from "./IConfig";
+import { GetCfgUidToCfg, IConfig } from "./IConfig";
 import { UnitProfession } from "library/game-logic/unit-professions";
 
 export class Config_Castle extends IConfig {
@@ -12,19 +12,20 @@ export class Config_Castle extends IConfig {
     constructor() { super(); }
 
     public static InitConfig() {
-        IConfig.InitConfig.call(this);
+        super.InitConfig();
+        var config = GetCfgUidToCfg(this.CfgUid);
 
         // запрещаем самоуничтожение
-        OpCfgUidToCfg[this.CfgUid].AllowedCommands.Remove(UnitCommand.DestroySelf);
+        config.AllowedCommands.Remove(UnitCommand.DestroySelf);
         // убираем строительство
-        OpCfgUidToCfg[this.CfgUid].ProfessionParams.Remove(UnitProfession.UnitProducer);
+        config.ProfessionParams.Remove(UnitProfession.UnitProducer);
         // убираем починку
-        OpCfgUidToCfg[this.CfgUid].ProfessionParams.Remove(UnitProfession.Reparable);
+        config.ProfessionParams.Remove(UnitProfession.Reparable);
         // здоровье
-        ScriptUtils.SetValue(OpCfgUidToCfg[this.CfgUid], "MaxHealth", Math.round(300000*this.HealthCoeff));
+        ScriptUtils.SetValue(config, "MaxHealth", Math.round(300000*this.HealthCoeff));
         // броня
-        ScriptUtils.SetValue(OpCfgUidToCfg[this.CfgUid], "Shield", 200);
+        ScriptUtils.SetValue(config, "Shield", 200);
         // увеличиваем видимость
-        ScriptUtils.SetValue(OpCfgUidToCfg[this.CfgUid], "Sight", 12);
+        ScriptUtils.SetValue(config, "Sight", 12);
     }
 }

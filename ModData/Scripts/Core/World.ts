@@ -5,7 +5,7 @@ import { Scena, Settlement, Unit, UnitCommand, UnitDirection } from "library/gam
 import { spawnUnit } from "library/game-logic/unit-spawn";
 import { world } from "./CastleFightPlugin";
 import { Cell as Cell, getCurrentTime } from "./Utils";
-import { OpCfgUidToCfg, OpCfgUidToEntity } from "./Configs/IConfig";
+import { GetCfgUidToCfg, OpCfgUidToEntity } from "./Configs/IConfig";
 import { Config_Worker } from "./Configs/Config_Worker";
 import { Config_Castle } from "./Configs/Config_Castle";
 import { UsedConfigs } from "./Configs/Configs";
@@ -97,7 +97,7 @@ export class World {
             UsedConfigs[i].InitEntity();
         }
         for (var i = 0; i < UsedConfigs.length; i++) {
-            UsedConfigs[i].Entity.InitConfig(OpCfgUidToCfg[UsedConfigs[i].CfgUid]);
+            UsedConfigs[i].Entity.InitConfig(GetCfgUidToCfg(UsedConfigs[i].CfgUid));
         }
     }
 
@@ -219,7 +219,7 @@ export class World {
             } else {
                 this.settlements_castleUnit[settlementId] = spawnUnit(
                     settlement,
-                    OpCfgUidToCfg[Config_Castle.CfgUid],
+                    GetCfgUidToCfg(Config_Castle.CfgUid),
                     createPoint(this.scena.settlements_castle_cell[settlementId].X, this.scena.settlements_castle_cell[settlementId].Y),
                     UnitDirection.Down
                 );

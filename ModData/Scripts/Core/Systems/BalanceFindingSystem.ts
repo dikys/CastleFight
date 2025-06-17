@@ -8,7 +8,7 @@ import { spawnUnit } from "library/game-logic/unit-spawn";
 import { AssignOrderMode } from "library/mastermind/virtual-input";
 import { GameState, World } from "../World";
 import { GetUnitsInArea, Rectangle, getCurrentTime } from "../Utils";
-import { OpCfgUidToCfg, OpCfgUidToEntity } from "../Configs/IConfig";
+import { GetCfgUidToCfg, OpCfgUidToEntity } from "../Configs/IConfig";
 import { Config_Worker } from "../Configs/Config_Worker";
 import { COMPONENT_TYPE } from "../Components/IComponent";
 import { SpawnBuildingComponent } from "../Components/SpawnBuildingComponent";
@@ -107,7 +107,7 @@ class Arena {
                 var swapCount = this.CalcBattleFieldLeftUnitsSwapCount(fieldNum, i);
                 for (var x = this.battleFields[fieldNum].leftSpawnRect.xs; x <= this.battleFields[fieldNum].leftSpawnRect.xe; x++) {
                     for (var y = this.battleFields[fieldNum].leftSpawnRect.ys; y <= this.battleFields[fieldNum].leftSpawnRect.ye; y++) {
-                        left_units.push(spawnUnit(settlement_left, OpCfgUidToCfg[unitInfo.cfgId], createPoint(x, y), UnitDirection.Down));
+                        left_units.push(spawnUnit(settlement_left, GetCfgUidToCfg(unitInfo.cfgId), createPoint(x, y), UnitDirection.Down));
                         if (++currCount >= swapCount) {
                             break;
                         }
@@ -127,7 +127,7 @@ class Arena {
                 var swapCount = this.CalcBattleFieldRightUnitsSwapCount(fieldNum, i);
                 for (var x = this.battleFields[fieldNum].rightSpawnRect.xe; x >= this.battleFields[fieldNum].rightSpawnRect.xs; x--) {
                     for (var y = this.battleFields[fieldNum].rightSpawnRect.ye; y >= this.battleFields[fieldNum].rightSpawnRect.ys; y--) {
-                        right_units.push(spawnUnit(settlement_right, OpCfgUidToCfg[unitInfo.cfgId], createPoint(x, y), UnitDirection.Down));
+                        right_units.push(spawnUnit(settlement_right, GetCfgUidToCfg(unitInfo.cfgId), createPoint(x, y), UnitDirection.Down));
                         if (++currCount >= swapCount) {
                             break;
                         }
@@ -269,7 +269,7 @@ var set_TableUnitsLeft : Map<number, Array<Array<number>>>;
 
 function Init(world: World) : boolean {
     const recurciveGetUnitInfo = (cfgId: string, shiftStr: string, accGold: number, accMetal: number, accLumber: number, accPeople: number) => {
-        var Uid : string = OpCfgUidToCfg[cfgId].Uid;
+        var Uid : string = GetCfgUidToCfg(cfgId).Uid;
         if (!OpCfgUidToEntity.has(Uid)) {
             return;
         }
@@ -283,7 +283,7 @@ function Init(world: World) : boolean {
 
         // обновляем накопленную стоимость здания
         
-        var CostResources = OpCfgUidToCfg[cfgId].CostResources;
+        var CostResources = GetCfgUidToCfg(cfgId).CostResources;
         accGold   += CostResources.Gold;
         accMetal  += CostResources.Metal;
         accLumber += CostResources.Lumber;
@@ -292,7 +292,7 @@ function Init(world: World) : boolean {
         // извлекаем текущего юнита
         
         var unitInfo : UnitInfo = new UnitInfo(
-            OpCfgUidToCfg[spawnBuildingComponent.spawnUnitConfigUid].Name,
+            GetCfgUidToCfg(spawnBuildingComponent.spawnUnitConfigUid).Name,
             accGold, accMetal, accLumber, accPeople,
             spawnBuildingComponent.spawnUnitConfigUid
         );
@@ -317,7 +317,8 @@ function Init(world: World) : boolean {
     
     opCfgUidToUnitInfo = new Map<string, UnitInfo>();
 
-    var producerParams = OpCfgUidToCfg[Config_Worker.CfgUid].GetProfessionParams(UnitProducerProfessionParams, UnitProfession.UnitProducer);
+    var producerParams = GetCfgUidToCfg(Config_Worker.CfgUid).GetProfessionParams(UnitProducerProfessionParams, UnitProfession.UnitProducer);
+    // @ts-expect-error
     var produceList    = producerParams.CanProduceList;
     for (var i = 0; i < produceList.Count; i++) {
         var produceUnit = produceList.Item.get(i);

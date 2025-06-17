@@ -1,6 +1,6 @@
 import { generateCellInSpiral } from "library/common/position-tools";
 import { UnitDirection } from "library/game-logic/horde-types";
-import { OpCfgUidToCfg } from "../Configs/IConfig";
+import { GetCfgUidToCfg } from "../Configs/IConfig";
 import { spawnUnits, UnitDisallowCommands } from "../Utils";
 import { World } from "../World";
 import { COMPONENT_TYPE } from "../Components/IComponent";
@@ -8,6 +8,7 @@ import { SpawnBuildingComponent } from "../Components/SpawnBuildingComponent";
 import { SpawnEvent } from "../Components/SpawnEvent";
 import { UnitComponent } from "../Components/UnitComponent";
 import { Entity } from "../Entity";
+import { Point2D } from "library/common/primitives";
 
 export function SpawnSystem(world: World, gameTickNum: number) {
     for (var settlementId = 0; settlementId < world.scena.settlementsCount; settlementId++) {
@@ -49,11 +50,14 @@ export function SpawnSystem(world: World, gameTickNum: number) {
                     else if (spawnBuildingComponent.spawnTact < gameTickNum) {
                         spawnBuildingComponent.spawnTact += spawnBuildingComponent.spawnPeriodTact;
                         
-                        var emergePoint = OpCfgUidToCfg[unitComponent.cfgUid].BuildingConfig.EmergePoint;
+                        var emergePoint = GetCfgUidToCfg(unitComponent.cfgUid).BuildingConfig.EmergePoint;
+                        if (!emergePoint) {
+                            emergePoint = new Point2D();
+                        }
 
                         // спавним юнитов
                         var generator     = generateCellInSpiral(unitComponent.unit.Cell.X + emergePoint.X, unitComponent.unit.Cell.Y + emergePoint.Y);
-                        var spawnedUnits  = spawnUnits(settlement, OpCfgUidToCfg[spawnBuildingComponent.spawnUnitConfigUid], spawnBuildingComponent.spawnCount, UnitDirection.Down, generator);
+                        var spawnedUnits  = spawnUnits(settlement, GetCfgUidToCfg(spawnBuildingComponent.spawnUnitConfigUid), spawnBuildingComponent.spawnCount, UnitDirection.Down, generator);
                         for (var spawnedUnit of spawnedUnits) {
                             UnitDisallowCommands(spawnedUnit);
                             world.RegisterUnitEntity(spawnedUnit);
@@ -72,7 +76,7 @@ export function SpawnSystem(world: World, gameTickNum: number) {
                     if (spawnEvent.spawnTact < gameTickNum) {
                         // спавним юнитов
                         var generator     = generateCellInSpiral(unitComponent.unit.Cell.X, unitComponent.unit.Cell.Y);
-                        var spawnedUnits  = spawnUnits(settlement, OpCfgUidToCfg[spawnEvent.spawnUnitConfigUid], spawnEvent.spawnCount, UnitDirection.Down, generator);
+                        var spawnedUnits  = spawnUnits(settlement, GetCfgUidToCfg(spawnEvent.spawnUnitConfigUid), spawnEvent.spawnCount, UnitDirection.Down, generator);
                         for (var spawnedUnit of spawnedUnits) {
                             UnitDisallowCommands(spawnedUnit);
                             var spawnedEntity = world.RegisterUnitEntity(spawnedUnit);
