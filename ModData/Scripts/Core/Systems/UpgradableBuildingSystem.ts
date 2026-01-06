@@ -54,7 +54,7 @@ export function UpgradableBuildingSystem(world: World, gameTickNum: number) {
                         world.RegisterUnitEntity(upgradedUnit);
 
                         // создаем эффект улучшения
-                        spawnDecoration(world.realScena, HordeContentApi.GetVisualEffectConfig("#VisualEffectConfig_BigDust"), upgradedUnit.Position);
+                        spawnDecoration(world.realScena, HordeContentApi.GetVisualEffectConfig("#VisualEffectConfig_BigDust"), upgradedUnit.Position.ToPoint2D());
                         break;
                     }
                 }

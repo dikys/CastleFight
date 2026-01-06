@@ -1,6 +1,8 @@
+import { broadcastMessage } from "library/common/messages";
 import { AttackPathChoiser_NearDistance, AttackPathChoiser_Periodically, AttackPathChoiser_Periodically_WithCondCell, IAttackPathChoiser } from "./AttackPathChoisers";
 import { Config_Castle } from "./Configs/Config_Castle";
 import { Cell, MetricType } from "./Utils";
+import { createHordeColor } from "library/common/primitives";
 
 export class IScena {
     public static scenaName: string = "";
@@ -15,10 +17,30 @@ export class IScena {
     public static  settlements_attack_paths: Array<Array<Array<Cell>>>;
     /** для каждого поселения хранится селектор пути атаки */
     public static  settlements_attackPathChoiser: Array<IAttackPathChoiser>;
+    /** для каждого поселения хранится команда */
+    public static  settlements_teamNum: Array<Number>;
 
     constructor() {}
 
-    public static Init() { }
+    public static Init() {
+        // настраиваем дипломатию
+        if (this.settlements_teamNum && this.settlements_teamNum.length == this.settlementsCount) {
+            broadcastMessage("Была установлена фиксированная дипломатия карты!", createHordeColor(255, 255, 100, 100));
+            for (var i = 0; i < this.settlementsCount; i++) {
+                let settlement_i = ActiveScena.Settlements.GetByUid(i.toString());
+                for (var j = i + 1; j < this.settlementsCount; j++) {
+                    let settlement_j = ActiveScena.Settlements.GetByUid(j.toString());
+                    if (this.settlements_teamNum[i] == this.settlements_teamNum[j]) {
+                        settlement_i.Diplomacy.DeclareAlliance(settlement_j);
+                        settlement_j.Diplomacy.DeclareAlliance(settlement_i);
+                    } else {
+                        settlement_i.Diplomacy.DeclareWar(settlement_j);
+                        settlement_j.Diplomacy.DeclareWar(settlement_i);
+                    }
+                }
+            }
+        }
+    }
 }
 export class Scena1 extends IScena {
     public static scenaName: string = "Битва замков - лесная тропа с мостами (3х3)";
@@ -55,6 +77,7 @@ export class Scena1 extends IScena {
         new AttackPathChoiser_NearDistance(),
         new AttackPathChoiser_NearDistance()
     ]
+    public static settlements_teamNum: Array<Number> = [1, 1, 1, 2, 2, 2]
 }
 export class Scena2 extends IScena {
     public static scenaName: string = "Битва замков - лесная тропа (3х3)";
@@ -91,6 +114,7 @@ export class Scena2 extends IScena {
         new AttackPathChoiser_NearDistance(),
         new AttackPathChoiser_NearDistance()
     ];
+    public static settlements_teamNum: Array<Number> = [1, 1, 1, 2, 2, 2];
 }
 export class Scena3 extends IScena {
     public static scenaName: string = "Битва замков - две тропы (3х3)";
@@ -145,6 +169,7 @@ export class Scena3 extends IScena {
         new AttackPathChoiser_NearDistance(),
         new AttackPathChoiser_NearDistance()
     ];
+    public static settlements_teamNum: Array<Number> = [1, 1, 1, 2, 2, 2];
 }
 export class Scena4 extends IScena {
     public static scenaName: string = "Битва замков - царь горы (2x2x2)";
@@ -189,6 +214,7 @@ export class Scena4 extends IScena {
         new AttackPathChoiser_NearDistance(MetricType.Euclid),
         new AttackPathChoiser_NearDistance(MetricType.Euclid)
     ];
+    public static settlements_teamNum: Array<Number> = [1, 1, 2, 2, 3, 3];
 }
 export class Scena5 extends IScena {
     public static scenaName: string = "Битва замков - царь горы (1x1x1x1)";
@@ -497,6 +523,7 @@ export class Scena10 extends IScena {
             [new Cell(208, 44)]
         ]
     ];
+    public static settlements_teamNum: Array<Number> = [1, 1, 2, 2, 3, 3];
     public static Init() {
         super.Init();
         this.settlements_attackPathChoiser = new Array<IAttackPathChoiser>(this.settlementsCount);

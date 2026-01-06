@@ -175,7 +175,7 @@ export function BuffSystem(world: World, gameTickNum: number) {
                     // запрещаем команды
                     UnitDisallowCommands(spawnedUnit);
                     // создаем эффект появления
-                    spawnDecoration(world.realScena, HordeContentApi.GetVisualEffectConfig("#VisualEffectConfig_LittleDust"), spawnedUnit.Position);
+                    spawnDecoration(world.realScena, HordeContentApi.GetVisualEffectConfig("#VisualEffectConfig_LittleDust"), spawnedUnit.Position.ToPoint2D());
                 }
             }
 
@@ -195,7 +195,7 @@ export function BuffSystem(world: World, gameTickNum: number) {
                 // запрещаем команды
                 UnitDisallowCommands(target_unitComponent.unit);
                 // создаем эффект появления
-                spawnDecoration(world.realScena, HordeContentApi.GetVisualEffectConfig("#VisualEffectConfig_LittleDust"), target_unitComponent.unit.Position);
+                spawnDecoration(world.realScena, HordeContentApi.GetVisualEffectConfig("#VisualEffectConfig_LittleDust"), target_unitComponent.unit.Position.ToPoint2D());
             } else {
                 var generator    = generateCellInSpiral(target_unitComponent.unit.Cell.X, target_unitComponent.unit.Cell.Y);
                 // @ts-expect-error
@@ -209,7 +209,7 @@ export function BuffSystem(world: World, gameTickNum: number) {
                     // запрещаем команды
                     UnitDisallowCommands(spawnedUnit);
                     // создаем эффект появления
-                    spawnDecoration(world.realScena, HordeContentApi.GetVisualEffectConfig("#VisualEffectConfig_LittleDust"), spawnedUnit.Position);
+                    spawnDecoration(world.realScena, HordeContentApi.GetVisualEffectConfig("#VisualEffectConfig_LittleDust"), spawnedUnit.Position.ToPoint2D());
                 }
             }
         }

@@ -583,11 +583,9 @@ export function BalanceFindingSystem(world: World, gameTickNum: number) {
             }
             break;
         case Stage.Testing:
-            var time : number = getCurrentTime();
             if (Test(world)) {
                 stage = Stage.Result;
             }
-            testTime += getCurrentTime() - time;
 
             // оцениваем сколько осталось времени до окончания теста
             if (systemRuns % 30 == 0) {
@@ -608,7 +606,8 @@ export function BalanceFindingSystem(world: World, gameTickNum: number) {
                     }
                 }
 
-                log.info("needBattles / totalBattles = ", needBattles, " / ", totalBattles, " осталось ", Math.round(testTime / (totalBattles - needBattles) * needBattles / 1000) , " секунд");
+                var testTime = Battle.GameTimer.GameFramesCounter;
+                log.info("needBattles / totalBattles = ", needBattles, " / ", totalBattles, " осталось ", Math.round(testTime / (totalBattles - needBattles) * needBattles) , " тиков");
             }
 
             break;

@@ -199,6 +199,13 @@ export function AttackingAlongPathSystem_stage2(world: World, gameTickNum: numbe
                     unitInCell.Cfg.Uid == Config_Castle.CfgUid &&
                     Number.parseInt(unitInCell.Owner.Uid) < world.scena.settlementsCount &&
                     world.settlements_settlements_warFlag[settlementId][Number.parseInt(unitInCell.Owner.Uid)]) {
+                    // юниты могли стоять без дела!
+                    if (unitComponent.unit.OrdersMind.IsIdle()) {
+                        UnitGiveOrderToCell(unitComponent.unit,
+                            attackingAlongPathComponent.attackPath[attackingAlongPathComponent.currentPathPointNum],
+                            UnitCommand.Attack,
+                            AssignOrderMode.Replace);
+                    }
                     continue;
                 }
 

@@ -1,7 +1,7 @@
 import { createPoint } from "library/common/primitives";
 import { spawnBullet } from "library/game-logic/bullet-spawn";
 import { UnitState, StateMotion, UnitAnimState, AnimatorScriptTasks, WorldConstants } from "library/game-logic/horde-types";
-import { setUnitStateWorker } from "library/game-logic/workers-tools";
+import { setUnitStateWorker } from "library/game-logic/workers";
 import HordePluginBase from "plugins/base-plugin";
 
 
@@ -12,12 +12,14 @@ export class BeammanPlugin extends HordePluginBase {
     // @ts-expect-error
     private hitTable;
     private hitSounds: any;
+    public static plugin: BeammanPlugin;
 
     /**
      * Конструктор.
      */
     public constructor() {
         super("Воин с дубиной");
+        BeammanPlugin.plugin = this;
     }
 
     /**
@@ -29,7 +31,7 @@ export class BeammanPlugin extends HordePluginBase {
         
         // Установка обработчика удара
         let unitCfg = HordeContentApi.GetUnitConfig("#UnitConfig_Slavyane_Beamman");
-        setUnitStateWorker(this, unitCfg, UnitState.Hit, this.stateWorker_Hit);
+        setUnitStateWorker("BeammanPlugin", unitCfg, UnitState.Hit, this.stateWorker_Hit);
     }
 
     /**
@@ -55,11 +57,11 @@ export class BeammanPlugin extends HordePluginBase {
             let hitNum = (u.VisualMind.Animator.CurrentAnimFrame - 4);
 
             // Удар
-            this.makeOneHit(u, motion, hitNum);
+            BeammanPlugin.plugin.makeOneHit(u, motion, hitNum);
 
             // Звуки боя на первый удар
             if (hitNum == 0) {
-                u.SoundsMind.UtterSound(this.hitSounds, "Hit", u.Position);
+                u.SoundsMind.UtterSound(BeammanPlugin.plugin.hitSounds, "Hit", u.Position.ToPoint2D());
             }
 
             // Устанавливаем время перезарядки
@@ -88,7 +90,7 @@ export class BeammanPlugin extends HordePluginBase {
      */
     private makeOneHit(u:any, motion:any, hitNum:number) {
         // Смещения координат удара относительно центра воина в зависимости от направления
-        let hits = this.hitTable[u.Direction.ToString()];
+        let hits = BeammanPlugin.plugin.hitTable[u.Direction.ToString()];
         if (!hits) {
             return;
         }
@@ -100,8 +102,8 @@ export class BeammanPlugin extends HordePluginBase {
         }
 
         // Координаты текущего удара
-        let targetPosition = createPoint(hitBias.X + u.Position.X,
-                                         hitBias.Y + u.Position.Y);
+        let unitPos        = u.Position.ToPoint2D();
+        let targetPosition = createPoint(Math.round(hitBias.X + unitPos.X), Math.round(hitBias.Y + unitPos.Y));
 
         // Дружественным воинам урон не наносим
         let unitInCell = u.Scena.UnitsMap.GetUpperUnit(Math.floor(targetPosition.X / WorldConstants.CellSize),

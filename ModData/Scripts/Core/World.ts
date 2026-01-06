@@ -141,7 +141,7 @@ export class World {
                 }
 
                 // Отключить прирост населения
-                let censusModel = ScriptUtils.GetValue(settlement.Census, "Model");
+                let censusModel = ScriptUtils.GetValue(settlement.Census, "Data");
                 censusModel.PeopleIncomeLevels.Clear();
                 censusModel.PeopleIncomeLevels.Add(new PeopleIncomeLevelT(0, 0, -1));
                 censusModel.LastPeopleIncomeLevel = 0;
