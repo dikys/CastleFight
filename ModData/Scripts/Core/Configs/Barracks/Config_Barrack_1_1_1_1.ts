@@ -1,11 +1,10 @@
 import { createHordeColor } from "library/common/primitives";
-import { GetCfgUidToCfg } from "../../IConfig";
-import { IBarrack } from "../IBarrack";
-import { IAttackingUnit } from "../../IAttackingUnit";
-import { Config_MagesWay } from "./Config_MagesWay";
+import { GetCfgUidToCfg } from "../IConfig";
+import { IBarrack } from "./IBarrack";
+import { IAttackingUnit } from "../IAttackingUnit";
 
-export class Config_MagesUnit_1_1_1_1 extends IAttackingUnit {
-    public static CfgUid      : string = "#CastleFight_MagesUnit_1_1_1_1";
+export class Config_Unit_1_1_1_1 extends IAttackingUnit {
+    public static CfgUid      : string = "#CastleFight_Unit_1_1_1_1";
     public static BaseCfgUid  : string = "#UnitConfig_Mage_Mag_16";
 
     constructor() { super(); }
@@ -27,11 +26,11 @@ export class Config_MagesUnit_1_1_1_1 extends IAttackingUnit {
     }
 }
 
-export class Config_MagesBarrack_1_1_1_1 extends IBarrack {
-    public static CfgUid      : string = "#CastleFight_MagesBarrack_1_1_1_1";
+export class Config_Barrack_1_1_1_1 extends IBarrack {
+    public static CfgUid      : string = "#CastleFight_Barrack_1_1_1_1";
     public static BaseCfgUid  : string = "#UnitConfig_Mage_MageHouse";
 
-    public static spawnedUnit : typeof IAttackingUnit = Config_MagesUnit_1_1_1_1;
+    public static spawnedUnit : typeof IAttackingUnit = Config_Unit_1_1_1_1;
 
     constructor() { super(); }
 
@@ -43,7 +42,5 @@ export class Config_MagesBarrack_1_1_1_1 extends IBarrack {
         ScriptUtils.SetValue(config, "Name", "Приют мага огня");
         // меняем цвет
         ScriptUtils.SetValue(config, "TintColor", createHordeColor(255, 200, 0, 0));
-        // добавляем требование
-        config.TechConfig.Requirements.Add(GetCfgUidToCfg(Config_MagesWay.CfgUid));
     }
 }

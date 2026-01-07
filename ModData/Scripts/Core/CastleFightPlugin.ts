@@ -57,7 +57,7 @@ export class CastleFightPlugin extends HordePluginBase {
                     world.RegisterSystem(UpgradableBuildingSystem, "UpgradableBuildingSystem");
 
                     if (scenaName != "Битва замков - тест баланса") {
-                        //world.RegisterSystem(AI_System,  "AI_System");
+                        world.RegisterSystem(AI_System,  "AI_System");
                     }
 
                     world.RegisterSystem(BuffSystem, "BuffSystem");

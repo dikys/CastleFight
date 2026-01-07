@@ -9,12 +9,12 @@ import { AssignOrderMode } from "library/mastermind/virtual-input";
 import { GameState, World } from "../World";
 import { GetUnitsInArea, Rectangle, getCurrentTime } from "../Utils";
 import { GetCfgUidToCfg, OpCfgUidToEntity } from "../Configs/IConfig";
+import { Config_Worker } from "../Configs/Config_Worker";
 import { COMPONENT_TYPE } from "../Components/IComponent";
 import { SpawnBuildingComponent } from "../Components/SpawnBuildingComponent";
 import { UnitComponent } from "../Components/UnitComponent";
 import { UpgradableBuildingComponent } from "../Components/UpgradableBuildingComponent";
 import { Entity } from "../Entity";
-import { Config_Worker } from "../Configs/Config_Worker";
 
 enum Stage {
     Init = 0, Testing, Result, End

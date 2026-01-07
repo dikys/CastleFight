@@ -1,11 +1,10 @@
 import { createHordeColor } from "library/common/primitives";
-import { GetCfgUidToCfg } from "../../IConfig";
-import { IBarrack } from "../IBarrack";
-import { IAttackingUnit } from "../../IAttackingUnit";
-import { Config_MachineryWay } from "./Config_MachineryWay";
+import { GetCfgUidToCfg } from "../IConfig";
+import { IBarrack } from "./IBarrack";
+import { IAttackingUnit } from "../IAttackingUnit";
 
-export class Config_MachineryUnit_1_1_2 extends IAttackingUnit {
-    public static CfgUid      : string = "#CastleFight_MachineryUnit_1_1_2";
+export class Config_Unit_1_1_2 extends IAttackingUnit {
+    public static CfgUid      : string = "#CastleFight_Unit_1_1_2";
     public static BaseCfgUid  : string = "#UnitConfig_Slavyane_Balista";
 
     constructor() { super(); }
@@ -28,11 +27,11 @@ export class Config_MachineryUnit_1_1_2 extends IAttackingUnit {
     }
 }
 
-export class Config_MachineryBarrack_1_1_2 extends IBarrack {
-    public static CfgUid      : string = "#CastleFight_MachineryBarrack_1_1_2";
+export class Config_Barrack_1_1_2 extends IBarrack {
+    public static CfgUid      : string = "#CastleFight_Barrack_1_1_2";
     public static BaseCfgUid  : string = "#UnitConfig_Slavyane_Factory";
 
-    public static spawnedUnit        : typeof IAttackingUnit = Config_MachineryUnit_1_1_2;
+    public static spawnedUnit        : typeof IAttackingUnit = Config_Unit_1_1_2;
 
     constructor() { super(); }
 
@@ -44,12 +43,5 @@ export class Config_MachineryBarrack_1_1_2 extends IBarrack {
         ScriptUtils.SetValue(config, "Name", "Завод огня");
         // меняем цвет
         ScriptUtils.SetValue(config, "TintColor", createHordeColor(255, 200, 0, 0));
-        // добавляем требование
-        config.TechConfig.Requirements.Add(GetCfgUidToCfg(Config_MachineryWay.CfgUid));
-        // стоимость обычного улучшаемого здания
-        ScriptUtils.SetValue(config.CostResources, "Gold",   200);
-        ScriptUtils.SetValue(config.CostResources, "Metal",  0);
-        ScriptUtils.SetValue(config.CostResources, "Lumber", 200);
-        ScriptUtils.SetValue(config.CostResources, "People", 0);
     }
 }

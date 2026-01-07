@@ -1,11 +1,10 @@
 import { createHordeColor } from "library/common/primitives";
-import { GetCfgUidToCfg } from "../../IConfig";
-import { IBarrack } from "../IBarrack";
-import { IAttackingUnit } from "../../IAttackingUnit";
-import { Config_MelleWay } from "./Config_MelleWay";
+import { GetCfgUidToCfg } from "../IConfig";
+import { IBarrack } from "./IBarrack";
+import { IAttackingUnit } from "../IAttackingUnit";
 
-export class Config_MeleeUnit_2_1_2 extends IAttackingUnit {
-    public static CfgUid      : string = "#CastleFight_MeleeUnit_2_1_2";
+export class Config_Unit_2_1_2 extends IAttackingUnit {
+    public static CfgUid      : string = "#CastleFight_Unit_2_1_2";
     public static BaseCfgUid  : string = "#UnitConfig_Slavyane_Beamman";
     public static speedCoeff  : number = 1.5;
 
@@ -24,11 +23,11 @@ export class Config_MeleeUnit_2_1_2 extends IAttackingUnit {
     }
 }
 
-export class Config_MeleeBarrack_2_1_2 extends IBarrack {
-    public static CfgUid      : string = "#CastleFight_MeleeBarrack_2_1_2";
+export class Config_Barrack_2_1_2 extends IBarrack {
+    public static CfgUid      : string = "#CastleFight_Barrack_2_1_2";
     public static BaseCfgUid  : string = "#UnitConfig_Slavyane_StoneBarrack";
 
-    public static spawnedUnit        : typeof IAttackingUnit = Config_MeleeUnit_2_1_2;
+    public static spawnedUnit        : typeof IAttackingUnit = Config_Unit_2_1_2;
 
     constructor() { super(); }
 
@@ -40,7 +39,5 @@ export class Config_MeleeBarrack_2_1_2 extends IBarrack {
         ScriptUtils.SetValue(config, "Name", "Академия дубины");
         // меняем цвет
         ScriptUtils.SetValue(config, "TintColor", createHordeColor(255, 170, 107, 0));
-        // добавляем требование
-        config.TechConfig.Requirements.Add(GetCfgUidToCfg(Config_MelleWay.CfgUid));
     }
 }

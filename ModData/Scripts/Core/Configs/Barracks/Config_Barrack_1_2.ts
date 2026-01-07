@@ -1,11 +1,11 @@
 import { createHordeColor } from "library/common/primitives";
-import { GetCfgUidToCfg } from "../../IConfig";
-import { IBarrack } from "../IBarrack";
-import { IAttackingUnit } from "../../IAttackingUnit";
-import { Config_ArchersWay } from "./Config_ArchersWay";
+import { GetCfgUidToCfg } from "../IConfig";
+import { IBarrack } from "./IBarrack";
+import { IAttackingUnit } from "../IAttackingUnit";
+import { Config_Barrack_1_2_1 } from "./Config_Barrack_1_2_1";
 
-export class Config_ArchersUnit_1_2 extends IAttackingUnit {
-    public static CfgUid      : string = "#CastleFight_ArchersUnit_1_2";
+export class Config_Unit_1_2 extends IAttackingUnit {
+    public static CfgUid      : string = "#CastleFight_Unit_1_2";
     public static BaseCfgUid  : string = "#UnitConfig_Slavyane_Crossbowman";
 
     constructor() { super(); }
@@ -23,12 +23,12 @@ export class Config_ArchersUnit_1_2 extends IAttackingUnit {
     }
 }
 
-export class Config_ArchersBarrack_1_2 extends IBarrack {
-    public static CfgUid      : string = "#CastleFight_ArchersBarrack_1_2";
+export class Config_Barrack_1_2 extends IBarrack {
+    public static CfgUid      : string = "#CastleFight_Barrack_1_2";
     public static BaseCfgUid  : string = "#UnitConfig_Slavyane_Sawmill";
 
-    public static spawnedUnit        : typeof IAttackingUnit = Config_ArchersUnit_1_2;
-    public static improvesToBarracks : Array<typeof IBarrack> = [];
+    public static spawnedUnit        : typeof IAttackingUnit = Config_Unit_1_2;
+    public static improvesToBarracks : Array<typeof IBarrack> = [Config_Barrack_1_2_1];
 
     constructor() { super(); }
 
@@ -40,7 +40,5 @@ export class Config_ArchersBarrack_1_2 extends IBarrack {
         ScriptUtils.SetValue(config, "Name", "Стрельбище металла");
         // меняем цвет
         ScriptUtils.SetValue(config, "TintColor", createHordeColor(255, 170, 169, 173));
-        // добавляем требование
-        config.TechConfig.Requirements.Add(GetCfgUidToCfg(Config_ArchersWay.CfgUid));
     }
 }

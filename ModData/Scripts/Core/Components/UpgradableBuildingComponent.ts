@@ -75,20 +75,10 @@ export class UpgradableBuildingComponent extends IComponent {
                     var spawnBuildingComponent = entity.components.get(COMPONENT_TYPE.SPAWN_BUILDING_COMPONENT) as SpawnBuildingComponent;
                     iconCfg  = CreateUnitConfig(spawnBuildingComponent.spawnUnitConfigUid, iconCfgUid);
                 } else {
-                    iconCfg = CreateUnitConfig("#UnitConfig_Slavyane_Swordmen", iconCfgUid);
-                    // iconCfg.PortraitCatalog.Setup(cfg.PortraitCatalog.HolderContentPack);
-                    // ScriptUtils.GetValue(iconCfg, "PortraitCatalogRef")
-                    //     .SetConfig(HordeContentApi.GetAnimationCatalog(
-                    //         ScriptUtils.GetValue(cfg, "PortraitCatalogRef")
-                    //     ));
+                    iconCfg = CreateUnitConfig(cfgUid, iconCfgUid);
                 }
             } else {
-                iconCfg = CreateUnitConfig("#UnitConfig_Slavyane_Swordmen", iconCfgUid);
-                // iconCfg.PortraitCatalog.Setup(cfg.PortraitCatalog.HolderContentPack);
-                // ScriptUtils.GetValue(iconCfg, "PortraitCatalogRef")
-                //     .SetConfig(HordeContentApi.GetAnimationCatalog(
-                //         ScriptUtils.GetValue(cfg, "PortraitCatalogRef")
-                //     ));
+                iconCfg = CreateUnitConfig(cfgUid, iconCfgUid);
             }
 
             // настраиваем конфиг иконки
@@ -101,7 +91,6 @@ export class UpgradableBuildingComponent extends IComponent {
             ScriptUtils.SetValue(iconCfg.CostResources, "Lumber", cfg.CostResources.Lumber);
             ScriptUtils.SetValue(iconCfg.CostResources, "People", cfg.CostResources.People);
             iconCfg.TechConfig.Requirements.Clear();
-            iconCfg.TechConfig.Requirements.AddRange(cfg.TechConfig.Requirements.GetRange(0, cfg.TechConfig.Requirements.Count));
 
             SetCfgUidToCfg(iconCfgUid, iconCfg);
         } else {
