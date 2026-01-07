@@ -151,6 +151,25 @@ export function BuffSystem(world: World, gameTickNum: number) {
                         ScriptUtils.SetValue(buffUnitCfg, "Name", buffUnitCfg.Name + "\n{клонирован}");
                         ScriptUtils.SetValue(buffUnitCfg, "TintColor", createHordeColor(150, 255, 255, 255));
                         break;
+                    case BUFF_TYPE.IMPROVE:
+                        ScriptUtils.SetValue(buffUnitCfg, "Name",      buffUnitCfg.Name + "\n{одухотворен}");
+                        ScriptUtils.SetValue(buffUnitCfg, "TintColor", createHordeColor(150, 255, 215, 0));
+                        // техника или маг => урон
+                        if (buffUnitCfg.Specification.HasFlag(UnitSpecification.Machine) || 
+                            buffUnitCfg.Specification.HasFlag(UnitSpecification.Mage)) {
+                            ScriptUtils.SetValue(buffUnitCfg.MainArmament.ShotParams, "Damage", Math.min(1000, 5*buffUnitCfg.MainArmament.ShotParams.Damage));
+                        }
+                        // дальник => урон
+                        else if (buffUnitCfg.MainArmament.Range > 1) {
+                            ScriptUtils.SetValue(buffUnitCfg.MainArmament.ShotParams, "Damage", Math.min(1000, 5*buffUnitCfg.MainArmament.ShotParams.Damage));
+                            ScriptUtils.SetValue(buffUnitCfg.MainArmament, "EmitBulletsCountMin", Math.min(5, buffUnitCfg.MainArmament.EmitBulletsCountMin + 2));
+                            ScriptUtils.SetValue(buffUnitCfg.MainArmament, "EmitBulletsCountMax", Math.min(5, buffUnitCfg.MainArmament.EmitBulletsCountMax + 2));
+                        }
+                        // ближник => здоровье
+                        else {
+                            ScriptUtils.SetValue(buffUnitCfg, "MaxHealth", 5*buffUnitCfg.MaxHealth);
+                        }
+                        break;
                 }
             }
 

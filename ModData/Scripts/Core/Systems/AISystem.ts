@@ -25,11 +25,7 @@ import { Config_Mercenary_Archer_2 } from "../Configs/Mercenary/Config_Mercenary
 import { Config_Mercenary_Heavymen } from "../Configs/Mercenary/Config_Mercenary_Heavymen";
 import { Config_Mercenary_Raider } from "../Configs/Mercenary/Config_Mercenary_Raider";
 import { Config_Mercenary_Swordmen } from "../Configs/Mercenary/Config_Mercenary_Swordmen";
-import { Config_Holy_spirit_accuracy } from "../Configs/Church/Config_Holy_spirit_accuracy";
-import { Config_Holy_spirit_attack } from "../Configs/Church/Config_Holy_spirit_attack";
-import { Config_Holy_spirit_cloning } from "../Configs/Church/Config_Holy_spirit_cloning";
-import { Config_Holy_spirit_defense } from "../Configs/Church/Config_Holy_spirit_defense";
-import { Config_Holy_spirit_health } from "../Configs/Church/Config_Holy_spirit_health";
+import { Config_Holy_spirit_improve } from "../Configs/Church/Config_Holy_spirit_improve";
 
 class BotUnitType {
     config : typeof IConfig;
@@ -186,11 +182,12 @@ class IBot {
         ));
     
         this.Church_spirits_unit = new Array<BotUnitType>();
-        this.Church_spirits_unit.push(new BotUnitType(Config_Holy_spirit_accuracy, BuffableComponent.BuffsOptTarget[BUFF_TYPE.ACCURACY]));
-        this.Church_spirits_unit.push(new BotUnitType(Config_Holy_spirit_attack,   BuffableComponent.BuffsOptTarget[BUFF_TYPE.ATTACK]));
-        this.Church_spirits_unit.push(new BotUnitType(Config_Holy_spirit_cloning,  BuffableComponent.BuffsOptTarget[BUFF_TYPE.CLONING]));
-        this.Church_spirits_unit.push(new BotUnitType(Config_Holy_spirit_defense,  BuffableComponent.BuffsOptTarget[BUFF_TYPE.DEFFENSE]));
-        this.Church_spirits_unit.push(new BotUnitType(Config_Holy_spirit_health,   BuffableComponent.BuffsOptTarget[BUFF_TYPE.HEALTH]));
+        // this.Church_spirits_unit.push(new BotUnitType(Config_Holy_spirit_accuracy, BuffableComponent.BuffsOptTarget[BUFF_TYPE.ACCURACY]));
+        // this.Church_spirits_unit.push(new BotUnitType(Config_Holy_spirit_attack,   BuffableComponent.BuffsOptTarget[BUFF_TYPE.ATTACK]));
+        // this.Church_spirits_unit.push(new BotUnitType(Config_Holy_spirit_cloning,  BuffableComponent.BuffsOptTarget[BUFF_TYPE.CLONING]));
+        // this.Church_spirits_unit.push(new BotUnitType(Config_Holy_spirit_defense,  BuffableComponent.BuffsOptTarget[BUFF_TYPE.DEFFENSE]));
+        // this.Church_spirits_unit.push(new BotUnitType(Config_Holy_spirit_health,   BuffableComponent.BuffsOptTarget[BUFF_TYPE.HEALTH]));
+        this.Church_spirits_unit.push(new BotUnitType(Config_Holy_spirit_improve,   BuffableComponent.BuffsOptTarget[BUFF_TYPE.IMPROVE]));
     
         // добавляем лагерь наемников
     

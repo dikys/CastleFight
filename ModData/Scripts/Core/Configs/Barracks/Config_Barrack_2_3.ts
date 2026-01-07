@@ -3,6 +3,8 @@ import { GetCfgUidToCfg } from "../IConfig";
 import { IBarrack } from "./IBarrack";
 import { IAttackingUnit } from "../IAttackingUnit";
 import { Config_Barrack_2_3_1 } from "./Config_Barrack_2_3_1";
+import { COMPONENT_TYPE } from "../../Components/IComponent";
+import { COMBATAI_TYPE, CombatAIComponent } from "../../Components/CombatAIComponent";
 
 export class Config_Unit_2_3 extends IAttackingUnit {
     public static CfgUid      : string = "#CastleFight_Unit_2_3";
@@ -20,6 +22,11 @@ export class Config_Unit_2_3 extends IAttackingUnit {
         ScriptUtils.SetValue(config, "Shield", 0);
         // урон
         ScriptUtils.SetValue(config.MainArmament.ShotParams, "Damage", 500);
+    }
+
+    public static InitEntity() {
+        super.InitEntity();
+        this.Entity.components.set(COMPONENT_TYPE.COMBATAI_COMPONENT, new CombatAIComponent(COMBATAI_TYPE.FOCUS_MAGES));
     }
 }
 

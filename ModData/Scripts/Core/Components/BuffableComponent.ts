@@ -9,6 +9,7 @@ export enum BUFF_TYPE {
     HEALTH,
     DEFFENSE,
     CLONING,
+    IMPROVE,
 
     SIZE
 };
@@ -37,6 +38,7 @@ export class BuffableComponent extends IComponent {
         BuffOptTargetType.Range,
         BuffOptTargetType.All,
         BuffOptTargetType.All,
+        BuffOptTargetType.All,
         BuffOptTargetType.All
     ];
 
@@ -48,6 +50,7 @@ export class BuffableComponent extends IComponent {
         "_buffHealth",
         "_buffDeffense",
         "_buffCloning",
+        "_buffImprove",
         ""
     ];
 

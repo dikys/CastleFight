@@ -17,11 +17,6 @@ import { Config_Barrack_2_3_1, Config_Unit_2_3_1 } from "./Barracks/Config_Barra
 import { IBarrack } from "./Barracks/IBarrack";
 import { IAttackingUnit } from "./IAttackingUnit";
 import { Config_Church } from "./Church/Config_Church";
-import { Config_Holy_spirit_accuracy } from "./Church/Config_Holy_spirit_accuracy";
-import { Config_Holy_spirit_attack } from "./Church/Config_Holy_spirit_attack";
-import { Config_Holy_spirit_cloning } from "./Church/Config_Holy_spirit_cloning";
-import { Config_Holy_spirit_defense } from "./Church/Config_Holy_spirit_defense";
-import { Config_Holy_spirit_health } from "./Church/Config_Holy_spirit_health";
 import { Config_Castle } from "./Config_Castle";
 import { Config_Worker } from "./Config_Worker";
 import { IConfig } from "./IConfig";
@@ -31,6 +26,7 @@ import { Config_Mercenary_Archer } from "./Mercenary/Config_Mercenary_Archer";
 import { Config_Mercenary_Archer_2 } from "./Mercenary/Config_Mercenary_Archer_2";
 import { Config_Mercenary_Heavymen } from "./Mercenary/Config_Mercenary_Heavymen";
 import { Config_Mercenary_Raider } from "./Mercenary/Config_Mercenary_Raider";
+import { Config_Holy_spirit_improve } from "./Church/Config_Holy_spirit_improve";
 
 /** для корректной генерации описания нужен правильный порядок */
 export var BarrackConfigs : Array<typeof IBarrack> = [
@@ -76,11 +72,12 @@ export var UsedConfigs : Array<typeof IConfig> = [
     ...BarrackUnitConfigs,
     ...BarrackConfigs,
     Config_Castle,
-    Config_Holy_spirit_accuracy,
-    Config_Holy_spirit_attack,
-    Config_Holy_spirit_cloning,
-    Config_Holy_spirit_defense,
-    Config_Holy_spirit_health,
+    // Config_Holy_spirit_accuracy,
+    // Config_Holy_spirit_attack,
+    // Config_Holy_spirit_cloning,
+    // Config_Holy_spirit_defense,
+    // Config_Holy_spirit_health,
+    Config_Holy_spirit_improve,
     Config_Church,
     Config_Mercenary_Swordmen,
     Config_Mercenary_Archer,

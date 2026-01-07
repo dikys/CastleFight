@@ -1,13 +1,9 @@
 import { UnitProducerProfessionParams, UnitProfession } from "library/game-logic/unit-professions";
 import { CfgAddUnitProducer } from "../../Utils";
 import { IConfig, GetCfgUidToCfg } from "../IConfig";
-import { Config_Holy_spirit_accuracy } from "./Config_Holy_spirit_accuracy";
-import { Config_Holy_spirit_attack } from "./Config_Holy_spirit_attack";
-import { Config_Holy_spirit_defense } from "./Config_Holy_spirit_defense";
-import { Config_Holy_spirit_health } from "./Config_Holy_spirit_health";
-import { Config_Holy_spirit_cloning } from "./Config_Holy_spirit_cloning";
 import { COMPONENT_TYPE } from "../../Components/IComponent";
 import { UnitComponent } from "../../Components/UnitComponent";
+import { Config_Holy_spirit_improve } from "./Config_Holy_spirit_improve";
 
 export class Config_Church extends IConfig {
     public static CfgUid      : string = "#CastleFight_Church";
@@ -49,11 +45,12 @@ export class Config_Church extends IConfig {
             produceList.Clear();
 
             // добавляем святые духи
-            produceList.Add(GetCfgUidToCfg(Config_Holy_spirit_accuracy.CfgUid));
-            produceList.Add(GetCfgUidToCfg(Config_Holy_spirit_attack.CfgUid));
-            produceList.Add(GetCfgUidToCfg(Config_Holy_spirit_cloning.CfgUid));
-            produceList.Add(GetCfgUidToCfg(Config_Holy_spirit_defense.CfgUid));
-            produceList.Add(GetCfgUidToCfg(Config_Holy_spirit_health.CfgUid));
+            // produceList.Add(GetCfgUidToCfg(Config_Holy_spirit_accuracy.CfgUid));
+            // produceList.Add(GetCfgUidToCfg(Config_Holy_spirit_attack.CfgUid));
+            // produceList.Add(GetCfgUidToCfg(Config_Holy_spirit_cloning.CfgUid));
+            // produceList.Add(GetCfgUidToCfg(Config_Holy_spirit_defense.CfgUid));
+            // produceList.Add(GetCfgUidToCfg(Config_Holy_spirit_health.CfgUid));
+            produceList.Add(GetCfgUidToCfg(Config_Holy_spirit_improve.CfgUid));
         }
     }
 }

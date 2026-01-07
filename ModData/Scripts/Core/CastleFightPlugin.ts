@@ -12,6 +12,8 @@ import { SpawnSystem } from "./Systems/SpawnSystem";
 import { UnitProducedSystem } from "./Systems/UnitProducedSystem";
 import { UpgradableBuildingSystem } from "./Systems/UpgradableBuildingSystem";
 import { WordClearSystem } from "./Systems/WordClearSystem";
+import { CombatAIComponent } from "./Components/CombatAIComponent";
+import { CombatAISystem } from "./Systems/CombatAISystem";
 
 export var world = new World();
 
@@ -53,6 +55,7 @@ export class CastleFightPlugin extends HordePluginBase {
                     world.RegisterSystem(SpawnSystem, "SpawnSystem");
                     world.RegisterSystem(AttackingAlongPathSystem_stage1, "AttackingAlongPathSystem_stage1");
                     world.RegisterSystem(AttackingAlongPathSystem_stage2, "AttackingAlongPathSystem_stage2");
+                    world.RegisterSystem(CombatAISystem, "CombatAISystem");
                     world.RegisterSystem(ReviveSystem, "ReviveSystem");
                     world.RegisterSystem(UpgradableBuildingSystem, "UpgradableBuildingSystem");
 
