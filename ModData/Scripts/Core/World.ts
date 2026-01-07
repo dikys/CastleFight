@@ -133,7 +133,7 @@ export class World {
                     var goldTime        = totalLumberTime * 1.5;
 
                     var entity = new Entity();
-                    entity.components.set(COMPONENT_TYPE.SETTLEMENT_COMPONENT, new SettlementComponent(0, 100, 0, goldTime / goldPerPlayer * 100, 0));
+                    entity.components.set(COMPONENT_TYPE.SETTLEMENT_COMPONENT, new SettlementComponent(300, 100, 0, goldTime / goldPerPlayer * 100, 0));
                     entity.components.set(COMPONENT_TYPE.INCOME_EVENT, new IncomeEvent(0, 0, 5000 - totalLumberPerPlayer, 1));
                     entity.components.set(COMPONENT_TYPE.INCOME_LIMITED_PERIODICAL_COMPONENT,
                         new IncomeLimitedPeriodicalComponent(0, 0, totalLumberPerPlayer, 0, 0, 100, totalLumberTime / totalLumberPerPlayer * 100, 0))
