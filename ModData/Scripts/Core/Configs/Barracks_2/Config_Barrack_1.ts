@@ -1,8 +1,11 @@
 import { GetCfgUidToCfg } from "../IConfig";
-import { Config_Barrack_1_1 } from "./Config_Barrack_1_1";
-import { Config_Barrack_1_2 } from "./Config_Barrack_1_2";
 import { IBarrack } from "./IBarrack";
 import { IAttackingUnit } from "../IAttackingUnit";
+import { Config_ArchersBarrack_1_1 } from "./Archers/Config_ArchersBarrack_1_1";
+import { Config_ArchersBarrack_1_2 } from "./Archers/Config_ArchersBarrack_1_2";
+import { Config_MachineryBarrack_1_1_2 } from "./Machinery/Config_MachineryBarrack_1_1_2";
+import { Config_MachineryBarrack_1_2_1 } from "./Machinery/Config_MachineryBarrack_1_2_1";
+import { Config_MagesBarrack_1_1_1 } from "./Mages/Config_MagesBarrack_1_1_1";
 
 export class Config_Unit_1 extends IAttackingUnit {
     public static CfgUid      : string = "#CastleFight_Unit_1";
@@ -27,7 +30,17 @@ export class Config_Barrack_1 extends IBarrack {
     public static BaseCfgUid  : string = "#UnitConfig_Slavyane_Sawmill";
 
     public static spawnedUnit        : typeof IAttackingUnit = Config_Unit_1;
-    public static improvesToBarracks : Array<typeof IBarrack> = [Config_Barrack_1_1, Config_Barrack_1_2];
+    public static improvesToBarracks : Array<typeof IBarrack> = [
+        Config_ArchersBarrack_1_1, 
+        Config_ArchersBarrack_1_2,
+
+        Config_MachineryBarrack_1_1_2, 
+        Config_MachineryBarrack_1_2_1,
+
+        Config_MagesBarrack_1_1_1,
+
+        
+    ];
 
     constructor() { super(); }
 

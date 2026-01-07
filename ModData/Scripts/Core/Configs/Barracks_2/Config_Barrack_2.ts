@@ -1,9 +1,9 @@
 import { IAttackingUnit } from "../IAttackingUnit";
 import { GetCfgUidToCfg } from "../IConfig";
-import { Config_Barrack_2_1 } from "./Config_Barrack_2_1";
-import { Config_Barrack_2_2 } from "./Config_Barrack_2_2";
-import { Config_Barrack_2_3 } from "./Config_Barrack_2_3";
+import { Config_CavalryBarrack_2_2 } from "./Cavalry/Config_CavalryBarrack_2_2";
 import { IBarrack } from "./IBarrack";
+import { Config_MeleeBarrack_2_1 } from "./Melee/Config_MeleeBarrack_2_1";
+import { Config_UndeadBarrack_2_3 } from "./Undead/Config_UndeadBarrack_2_3";
 
 export class Config_Unit_2 extends IAttackingUnit {
     public static CfgUid      : string = "#CastleFight_Unit_2";
@@ -29,7 +29,13 @@ export class Config_Barrack_2 extends IBarrack {
     public static BaseCfgUid  : string = "#UnitConfig_Slavyane_Farm";
 
     public static spawnedUnit        : typeof IAttackingUnit = Config_Unit_2;
-    public static improvesToBarracks : Array<typeof IBarrack> = [Config_Barrack_2_1, Config_Barrack_2_2, Config_Barrack_2_3];
+    public static improvesToBarracks : Array<typeof IBarrack> = [
+        Config_CavalryBarrack_2_2,
+
+        Config_MeleeBarrack_2_1,
+
+        Config_UndeadBarrack_2_3
+    ];
 
     constructor() { super(); }
 

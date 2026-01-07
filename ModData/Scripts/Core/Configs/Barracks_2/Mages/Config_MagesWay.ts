@@ -1,8 +1,8 @@
 import { createHordeColor } from "library/common/primitives";
 import { GetCfgUidToCfg } from "../../IConfig";
-import { Config_EmptyWay } from "../Config_EmptyWay";
+import { Config_IWay } from "../Config_IWay";
 
-export class Config_MagesWay extends Config_EmptyWay {
+export class Config_MagesWay extends Config_IWay {
     public static CfgUid      : string = "#CastleFight_MagesWay";
 
     constructor() { super(); }

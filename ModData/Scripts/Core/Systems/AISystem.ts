@@ -8,7 +8,6 @@ import { generateCellInSpiral } from "library/common/position-tools";
 import { Cell, distance_Chebyshev } from "../Utils";
 import { IConfig, GetCfgUidToCfg, OpCfgUidToEntity } from "../Configs/IConfig";
 import { Config_Church } from "../Configs/Church/Config_Church";
-import { Config_Worker } from "../Configs/Config_Worker";
 import { BUFF_TYPE, BuffOptTargetType, BuffableComponent } from "../Components/BuffableComponent";
 import { BuffComponent } from "../Components/BuffComponent";
 import { COMPONENT_TYPE } from "../Components/IComponent";
@@ -30,6 +29,7 @@ import { Config_Holy_spirit_attack } from "../Configs/Church/Config_Holy_spirit_
 import { Config_Holy_spirit_cloning } from "../Configs/Church/Config_Holy_spirit_cloning";
 import { Config_Holy_spirit_defense } from "../Configs/Church/Config_Holy_spirit_defense";
 import { Config_Holy_spirit_health } from "../Configs/Church/Config_Holy_spirit_health";
+import { Config_Worker } from "../Configs/Config_Worker";
 
 class BotUnitType {
     config : typeof IConfig;

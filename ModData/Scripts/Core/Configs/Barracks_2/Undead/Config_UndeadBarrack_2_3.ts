@@ -1,11 +1,12 @@
 import { createHordeColor } from "library/common/primitives";
-import { GetCfgUidToCfg } from "../IConfig";
-import { IBarrack } from "./IBarrack";
-import { IAttackingUnit } from "../IAttackingUnit";
-import { Config_Barrack_2_3_1 } from "./Config_Barrack_2_3_1";
+import { GetCfgUidToCfg } from "../../IConfig";
+import { IBarrack } from "../IBarrack";
+import { IAttackingUnit } from "../../IAttackingUnit";
+import { Config_UndeadBarrack_2_3_1 } from "./Config_UndeadBarrack_2_3_1";
+import { Config_UndeadWay } from "./Config_UndeadWay";
 
-export class Config_Unit_2_3 extends IAttackingUnit {
-    public static CfgUid      : string = "#CastleFight_Unit_2_3";
+export class Config_UndeadUnit_2_3 extends IAttackingUnit {
+    public static CfgUid      : string = "#CastleFight_UndeadUnit_2_3";
     public static BaseCfgUid  : string = "#UnitConfig_Mage_Skeleton";
 
     constructor() { super(); }
@@ -23,12 +24,12 @@ export class Config_Unit_2_3 extends IAttackingUnit {
     }
 }
 
-export class Config_Barrack_2_3 extends IBarrack {
-    public static CfgUid      : string = "#CastleFight_Barrack_2_3";
+export class Config_UndeadBarrack_2_3 extends IBarrack {
+    public static CfgUid      : string = "#CastleFight_UndeadBarrack_2_3";
     public static BaseCfgUid  : string = "#UnitConfig_Slavyane_Barrack";
 
-    public static spawnedUnit        : typeof IAttackingUnit = Config_Unit_2_3;
-    public static improvesToBarracks : Array<typeof IBarrack> = [Config_Barrack_2_3_1];
+    public static spawnedUnit        : typeof IAttackingUnit = Config_UndeadUnit_2_3;
+    public static improvesToBarracks : Array<typeof IBarrack> = [Config_UndeadBarrack_2_3_1];
 
     constructor() { super(); }
 
@@ -40,5 +41,7 @@ export class Config_Barrack_2_3 extends IBarrack {
         ScriptUtils.SetValue(config, "Name", "Казарма нежити");
         // меняем цвет
         ScriptUtils.SetValue(config, "TintColor", createHordeColor(255, 203, 3, 247));
+        // добавляем требование
+        config.TechConfig.Requirements.Add(GetCfgUidToCfg(Config_UndeadWay.CfgUid));
     }
 }

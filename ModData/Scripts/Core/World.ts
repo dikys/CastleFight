@@ -6,7 +6,6 @@ import { spawnUnit } from "library/game-logic/unit-spawn";
 import { world } from "./CastleFightPlugin";
 import { Cell as Cell, getCurrentTime } from "./Utils";
 import { GetCfgUidToCfg, OpCfgUidToEntity } from "./Configs/IConfig";
-import { Config_Worker } from "./Configs/Config_Worker";
 import { Config_Castle } from "./Configs/Config_Castle";
 import { UsedConfigs } from "./Configs/Configs";
 import { IScena } from "./Scenas";
@@ -18,6 +17,7 @@ import { SettlementComponent } from "./Components/SettlementComponent";
 import { UnitComponent } from "./Components/UnitComponent";
 import { UnitProducedEvent } from "./Components/UnitProducedEvent";
 import { Entity } from "./Entity";
+import { Config_Worker } from "./Configs/Config_Worker";
 
 const PeopleIncomeLevelT = HordeClassLibrary.World.Settlements.Modules.Misc.PeopleIncomeLevel;
 
@@ -133,8 +133,8 @@ export class World {
                     var goldTime        = totalLumberTime * 1.5;
 
                     var entity = new Entity();
-                    entity.components.set(COMPONENT_TYPE.SETTLEMENT_COMPONENT, new SettlementComponent(300, 100, 0, goldTime / goldPerPlayer * 100, 0));
-                    entity.components.set(COMPONENT_TYPE.INCOME_EVENT, new IncomeEvent(0, 0, 5000 - totalLumberPerPlayer, 1));
+                    entity.components.set(COMPONENT_TYPE.SETTLEMENT_COMPONENT, new SettlementComponent(0, 100, 0, goldTime / goldPerPlayer * 100, 0));
+                    entity.components.set(COMPONENT_TYPE.INCOME_EVENT, new IncomeEvent(300, 0, 5000 - totalLumberPerPlayer, 1));
                     entity.components.set(COMPONENT_TYPE.INCOME_LIMITED_PERIODICAL_COMPONENT,
                         new IncomeLimitedPeriodicalComponent(0, 0, totalLumberPerPlayer, 0, 0, 100, totalLumberTime / totalLumberPerPlayer * 100, 0))
                     this.settlements_entities[settlementId].push(entity);
@@ -197,6 +197,7 @@ export class World {
                     this.settlements_settlements_warFlag[settlementId][other_settlementId] = false;
                 } else {
                     this.settlements_settlements_warFlag[settlementId][other_settlementId]
+                    // @ts-expect-error
                         = settlement.Diplomacy.IsWarStatus(this.settlements[other_settlementId]);
                 }
             }

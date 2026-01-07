@@ -1,16 +1,16 @@
-import { mergeFlags } from "library/dotnet/dotnet-utils";
 import { UnitCommand, UnitFlags } from "library/game-logic/horde-types";
-import { UnitProfession, UnitProducerProfessionParams } from "library/game-logic/unit-professions";
-import { Cell } from "../Utils";
-import { Config_Barrack_1 } from "./Barracks/Config_Barrack_1";
-import { Config_Barrack_2 } from "./Barracks/Config_Barrack_2";
-import { Config_Church } from "./Church/Config_Church";
-import { IConfig, GetCfgUidToCfg } from "./IConfig";
-import { Config_MercenaryCamp } from "./Mercenary/Config_MercenaryCamp";
 import { COMPONENT_TYPE } from "../Components/IComponent";
 import { ReviveComponent } from "../Components/ReviveComponent";
 import { UnitComponent } from "../Components/UnitComponent";
-
+import { Cell } from "../Utils";
+import { GetCfgUidToCfg, IConfig } from "./IConfig";
+import { mergeFlags } from "library/dotnet/dotnet-utils";
+import { UnitProducerProfessionParams, UnitProfession } from "library/game-logic/unit-professions";
+import { Config_Church } from "./Church/Config_Church";
+import { Config_MercenaryCamp } from "./Mercenary/Config_MercenaryCamp";
+import { Config_Barrack_1 } from "./Barracks_2/Config_Barrack_1";
+import { Config_Barrack_2 } from "./Barracks_2/Config_Barrack_2";
+import { Config_EmptyWay } from "./Barracks_2/Config_EmptyWay";
 
 export class Config_Worker extends IConfig {
     public static CfgUid      : string = "#CastleFight_Worker";
@@ -56,6 +56,7 @@ export class Config_Worker extends IConfig {
             produceList.Add(GetCfgUidToCfg(Config_Barrack_2.CfgUid));
             produceList.Add(GetCfgUidToCfg(Config_Church.CfgUid));
             produceList.Add(GetCfgUidToCfg(Config_MercenaryCamp.CfgUid));
+            produceList.Add(GetCfgUidToCfg(Config_EmptyWay.CfgUid));
         }
     }
 }
