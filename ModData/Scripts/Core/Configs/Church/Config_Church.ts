@@ -35,7 +35,7 @@ export class Config_Church extends IConfig {
         ScriptUtils.SetValue(config, "Description", "Святое место, позволяющее заполучить силу святых духов. Для вызова духа требуется хотя бы 1 свободная клетка вокруг церкви.");
         // стоимость
         ScriptUtils.SetValue(config.CostResources, "Gold",   500);
-        ScriptUtils.SetValue(config.CostResources, "Metal",  100);
+        ScriptUtils.SetValue(config.CostResources, "Metal",  0);
         ScriptUtils.SetValue(config.CostResources, "Lumber", 500);
         ScriptUtils.SetValue(config.CostResources, "People", 0);
         {
