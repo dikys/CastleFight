@@ -4,6 +4,8 @@ import { IBarrack } from "./IBarrack";
 import { IAttackingUnit } from "../IAttackingUnit";
 import { Config_Barrack_1_1_1 } from "./Config_Barrack_1_1_1";
 import { Config_Barrack_1_1_2 } from "./Config_Barrack_1_1_2";
+import { CombatAIComponent, UNIT_COMBAT_FLAG_BUILDING, UNIT_COMBAT_FLAG_FIRE_IMM, UNIT_COMBAT_FLAG_MACHINE } from "../../Components/CombatAIComponent";
+import { COMPONENT_TYPE } from "../../Components/IComponent";
 
 export class Config_Unit_1_1 extends IAttackingUnit {
     public static CfgUid      : string = "#CastleFight_Unit_1_1";
@@ -24,6 +26,14 @@ export class Config_Unit_1_1 extends IAttackingUnit {
         // увеличиваем количество выпускаемых стрел
         ScriptUtils.SetValue(config.MainArmament, "EmitBulletsCountMin", 4);
         ScriptUtils.SetValue(config.MainArmament, "EmitBulletsCountMax", 4);
+    }
+    
+    public static InitEntity() {
+        super.InitEntity();
+        this.Entity.components.set(COMPONENT_TYPE.COMBATAI_COMPONENT,new CombatAIComponent(
+            UNIT_COMBAT_FLAG_BUILDING | UNIT_COMBAT_FLAG_MACHINE,
+            UNIT_COMBAT_FLAG_FIRE_IMM,
+            false));
     }
 }
 

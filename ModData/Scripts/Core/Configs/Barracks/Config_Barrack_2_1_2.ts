@@ -2,6 +2,8 @@ import { createHordeColor } from "library/common/primitives";
 import { GetCfgUidToCfg } from "../IConfig";
 import { IBarrack } from "./IBarrack";
 import { IAttackingUnit } from "../IAttackingUnit";
+import { CombatAIComponent, UNIT_COMBAT_FLAG_BUILDING } from "../../Components/CombatAIComponent";
+import { COMPONENT_TYPE } from "../../Components/IComponent";
 
 export class Config_Unit_2_1_2 extends IAttackingUnit {
     public static CfgUid      : string = "#CastleFight_Unit_2_1_2";
@@ -20,6 +22,14 @@ export class Config_Unit_2_1_2 extends IAttackingUnit {
         ScriptUtils.SetValue(config, "Shield", 0);
         // урон
         ScriptUtils.SetValue(config.MainArmament.ShotParams, "Damage", 600);
+    }
+    
+    public static InitEntity() {
+        super.InitEntity();
+        this.Entity.components.set(COMPONENT_TYPE.COMBATAI_COMPONENT,new CombatAIComponent(
+            UNIT_COMBAT_FLAG_BUILDING,
+            0,
+            false));
     }
 }
 

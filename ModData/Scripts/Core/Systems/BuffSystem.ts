@@ -12,6 +12,7 @@ import { BuffComponent } from "../Components/BuffComponent";
 import { COMPONENT_TYPE } from "../Components/IComponent";
 import { UnitComponent } from "../Components/UnitComponent";
 import { Entity } from "../Entity";
+import { CombatAIComponent } from "../Components/CombatAIComponent";
 
 const ReplaceUnitParameters = HordeClassLibrary.World.Objects.Units.ReplaceUnitParameters;
 
@@ -157,17 +158,23 @@ export function BuffSystem(world: World, gameTickNum: number) {
                         // техника или маг => урон
                         if (buffUnitCfg.Specification.HasFlag(UnitSpecification.Machine) || 
                             buffUnitCfg.Specification.HasFlag(UnitSpecification.Mage)) {
-                            ScriptUtils.SetValue(buffUnitCfg.MainArmament.ShotParams, "Damage", Math.min(1000, 5*buffUnitCfg.MainArmament.ShotParams.Damage));
+                            ScriptUtils.SetValue(buffUnitCfg.MainArmament.ShotParams, "Damage", Math.min(750, 2*buffUnitCfg.MainArmament.ShotParams.Damage));
                         }
                         // дальник => урон
                         else if (buffUnitCfg.MainArmament.Range > 1) {
-                            ScriptUtils.SetValue(buffUnitCfg.MainArmament.ShotParams, "Damage", Math.min(1000, 5*buffUnitCfg.MainArmament.ShotParams.Damage));
-                            ScriptUtils.SetValue(buffUnitCfg.MainArmament, "EmitBulletsCountMin", Math.min(5, buffUnitCfg.MainArmament.EmitBulletsCountMin + 2));
-                            ScriptUtils.SetValue(buffUnitCfg.MainArmament, "EmitBulletsCountMax", Math.min(5, buffUnitCfg.MainArmament.EmitBulletsCountMax + 2));
+                            ScriptUtils.SetValue(buffUnitCfg.MainArmament.ShotParams, "Damage", Math.min(1000, 2*buffUnitCfg.MainArmament.ShotParams.Damage));
+                            ScriptUtils.SetValue(buffUnitCfg.MainArmament, "EmitBulletsCountMin", Math.min(7, buffUnitCfg.MainArmament.EmitBulletsCountMin + 2));
+                            ScriptUtils.SetValue(buffUnitCfg.MainArmament, "EmitBulletsCountMax", Math.min(7, buffUnitCfg.MainArmament.EmitBulletsCountMax + 2));
                         }
                         // ближник => здоровье
                         else {
-                            ScriptUtils.SetValue(buffUnitCfg, "MaxHealth", 5*buffUnitCfg.MaxHealth);
+                            ScriptUtils.SetValue(buffUnitCfg, "MaxHealth", 3*buffUnitCfg.MaxHealth);
+                        }
+
+                        // включаем улучшенное поведение
+                        if (target_entity.components.has(COMPONENT_TYPE.COMBATAI_COMPONENT)) {
+                            var combatAIComponent      = target_entity.components.get(COMPONENT_TYPE.COMBATAI_COMPONENT) as CombatAIComponent;
+                            combatAIComponent.isActive = true;
                         }
                         break;
                 }

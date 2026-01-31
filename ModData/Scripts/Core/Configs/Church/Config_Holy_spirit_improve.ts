@@ -25,7 +25,7 @@ export class Config_Holy_spirit_improve extends IConfig {
         // имя
         ScriptUtils.SetValue(config, "Name", "Святой дух");
         // описание
-        ScriptUtils.SetValue(config, "Description", "Тот кого ударит данный дух, получит его силу.");
+        ScriptUtils.SetValue(config, "Description", "Тот кого ударит данный дух, получит его силу. Включает продвинутое поведение у война.");
         // здоровье
         ScriptUtils.SetValue(config, "MaxHealth", 1);
         // делаем урон = 0
